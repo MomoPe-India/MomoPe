@@ -1,0 +1,44 @@
+name: merchant_app
+description: MomoPe Merchant App - Business registration and QR code management
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Supabase
+  supabase_flutter: ^2.8.0
+  
+  # State Management
+  flutter_riverpod: ^2.6.1
+  
+  # Auth
+  google_sign_in: ^6.3.0
+  
+  # UI & Fonts
+  google_fonts: ^6.3.3
+  
+  # QR Code Generation
+  qr_flutter: ^4.1.0
+  
+  # Utilities
+  uuid: ^4.5.1
+  fl_chart: ^0.66.0
+  intl: ^0.18.1
+  
+  # QR Download & Share
+  share_plus: ^7.2.1
+  path_provider: ^2.1.1
+  permission_handler: ^11.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true

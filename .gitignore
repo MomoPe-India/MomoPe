@@ -1,0 +1,62 @@
+# Environment variables
+.env
+.env.local
+.env.production
+*.env
+
+# Supabase
+.branches
+.temp
+supabase/.temp
+
+# Flutter/Dart
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.java
+**/android/key.properties
+**/ios/Flutter/.last_build_id
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/Runner.xcworkspace/
+**/ios/Pods/
+**/.dart_tool/
+**/.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+**/build/
+**/*.lock
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Node modules (for Supabase functions)
+node_modules/
+package-lock.json
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Firebase
+**/google-services.json
+**/GoogleService-Info.plist
+firebase-debug.log
+
+# Sensitive data
+secrets/
+*.key
+*.pem
+*.p12
+
+# Build artifacts
+*.apk
+*.aab
+*.ipa

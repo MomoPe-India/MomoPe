@@ -1,0 +1,65 @@
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e293b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00C4A7;stop-opacity:0" />
+      <stop offset="50%" style="stop-color:#00C4A7;stop-opacity:0.5" />
+      <stop offset="100%" style="stop-color:#00C4A7;stop-opacity:0" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="600" fill="url(#bgGrad)" />
+  
+  <!-- Grid -->
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#334155" stroke-width="0.5"/>
+  </pattern>
+  <rect width="800" height="600" fill="url(#grid)" opacity="0.2" />
+
+  <!-- Abstract Map Connections (Rayalaseema Region Representation) -->
+  <g stroke="#00C4A7" stroke-width="1" opacity="0.4">
+    <!-- Center Node (Kadapa) -->
+    <circle cx="400" cy="300" r="4" fill="#00C4A7" filter="url(#glow)">
+        <animate attributeName="r" values="4;8;4" dur="3s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="1;0.5;1" dur="3s" repeatCount="indefinite" />
+    </circle>
+    
+    <!-- Radiating Lines -->
+    <line x1="400" y1="300" x2="250" y2="150" stroke="url(#lineGrad)" />
+    <line x1="400" y1="300" x2="550" y2="150" stroke="url(#lineGrad)" />
+    <line x1="400" y1="300" x2="250" y2="450" stroke="url(#lineGrad)" />
+    <line x1="400" y1="300" x2="550" y2="450" stroke="url(#lineGrad)" />
+    <line x1="400" y1="300" x2="100" y2="300" stroke="url(#lineGrad)" />
+    <line x1="400" y1="300" x2="700" y2="300" stroke="url(#lineGrad)" />
+  </g>
+
+  <!-- Surrounding Nodes -->
+  <g fill="#35255e">
+    <circle cx="250" cy="150" r="3" opacity="0.6" />
+    <circle cx="550" cy="150" r="3" opacity="0.6" />
+    <circle cx="250" cy="450" r="3" opacity="0.6" />
+    <circle cx="550" cy="450" r="3" opacity="0.6" />
+    <circle cx="100" cy="300" r="3" opacity="0.6" />
+    <circle cx="700" cy="300" r="3" opacity="0.6" />
+  </g>
+  
+  <!-- Rings -->
+  <circle cx="400" cy="300" r="100" fill="none" stroke="#35255e" stroke-width="1" opacity="0.2" stroke-dasharray="5,5">
+    <animateTransform attributeName="transform" type="rotate" from="0 400 300" to="360 400 300" dur="20s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="400" cy="300" r="180" fill="none" stroke="#35255e" stroke-width="1" opacity="0.1">
+     <animateTransform attributeName="transform" type="rotate" from="360 400 300" to="0 400 300" dur="30s" repeatCount="indefinite" />
+  </circle>
+
+</svg>
