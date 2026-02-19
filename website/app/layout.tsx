@@ -23,7 +23,7 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   metadataBase: new URL('https://momope.com'),
   title: {
-    default: "MomoPe | The Financial OS for Local Commerce",
+    default: "MomoPe | Scan. Pay. Earn.",
     template: "%s | MomoPe"
   },
   description: "Earn real rewards at your favorite local stores. MomoPe helps 10,000+ merchants grow revenue with automated loyalty and instant settlements.",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_IN",
     url: "https://momope.com",
-    title: "MomoPe | Pay. Earn. Repeat.",
+    title: "MomoPe | Scan. Pay. Earn.",
     description: "The rewards platform that actually works. Join 10k+ users earning real value on every transaction.",
     siteName: "MomoPe",
   },
