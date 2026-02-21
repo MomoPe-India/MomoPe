@@ -58,7 +58,7 @@ export function HeroSection() {
                             transition={{ delay: 0.2 }}
                             className="text-lg md:text-xl text-text-secondary mb-10 leading-relaxed max-w-lg mx-auto lg:mx-0 font-medium"
                         >
-                            A smart digital payments app that rewards you on every transaction. Fast, seamless, and built for the modern economy.
+                            A future-ready digital payments app that turns every transaction into a fast, seamless, and rewarding experience for the modern economy.
                         </motion.p>
 
                         <motion.div
