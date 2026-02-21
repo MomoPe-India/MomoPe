@@ -47,7 +47,7 @@ export function HeroSection() {
                             className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-black text-secondary tracking-tight mb-8 leading-[1.02]"
                         >
                             Scan. Pay. <br className="hidden sm:block" />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary-dark to-secondary animate-gradient-x drop-shadow-[0_0_15px_rgba(0,196,167,0.3)]">
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary-dark to-momo-blue animate-gradient-x drop-shadow-[0_0_15px_rgba(0,196,167,0.3)]">
                                 & Earn.
                             </span>
                         </motion.h1>
