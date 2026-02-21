@@ -35,29 +35,29 @@ export function HomeReferralSection() {
                     </motion.div>
 
                     {/* Premium Toggle */}
-                    <div className="bg-white p-1 rounded-full shadow-sm border border-gray-200 inline-flex relative">
+                    <div className="bg-white p-1.5 rounded-full shadow-umbra-md border border-gray-100 inline-flex relative overflow-hidden">
                         {/* Sliding Background */}
                         <motion.div
-                            className="absolute top-1 bottom-1 bg-[#35255e] rounded-full shadow-md z-0"
+                            className="absolute top-1.5 bottom-1.5 bg-secondary rounded-full shadow-lg z-0"
                             initial={false}
                             animate={{
-                                left: view === "users" ? "4px" : "50%",
-                                width: "calc(50% - 4px)"
+                                left: view === "users" ? "6px" : "calc(50% + 1px)",
+                                width: "calc(50% - 7px)"
                             }}
-                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                            transition={{ type: "spring", stiffness: 400, damping: 35 }}
                         />
 
                         <button
                             onClick={() => setView("users")}
-                            className={`relative z-10 px-8 py-3 rounded-full text-sm font-bold transition-colors duration-300 ${view === "users" ? "text-white" : "text-gray-500 hover:text-gray-700"}`}
+                            className={`relative z-10 px-10 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-colors duration-500 ${view === "users" ? "text-white" : "text-gray-400 hover:text-secondary"}`}
                         >
-                            For You
+                            Consumer
                         </button>
                         <button
                             onClick={() => setView("merchants")}
-                            className={`relative z-10 px-8 py-3 rounded-full text-sm font-bold transition-colors duration-300 ${view === "merchants" ? "text-white" : "text-gray-500 hover:text-gray-700"}`}
+                            className={`relative z-10 px-10 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-colors duration-500 ${view === "merchants" ? "text-white" : "text-gray-400 hover:text-secondary"}`}
                         >
-                            For Merchants
+                            Merchant
                         </button>
                     </div>
                 </div>
@@ -159,7 +159,7 @@ interface CardProps {
 
 function ReferralCard({ icon, title, desc, step, color, bg }: CardProps) {
     return (
-        <div className="group relative bg-white/80 backdrop-blur-xl p-8 rounded-3xl border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] hover:-translate-y-2 transition-all duration-500 overflow-hidden">
+        <div className="group relative bg-white/80 backdrop-blur-xl p-8 rounded-3xl border border-white/50 shadow-umbra-lg hover:shadow-premium hover:-translate-y-2 transition-all duration-500 overflow-hidden">
 
             {/* Gradient Border Effect on Hover */}
             <div className="absolute inset-0 border-2 border-transparent group-hover:border-primary/10 rounded-3xl transition-colors duration-500 pointer-events-none" />

@@ -8,8 +8,9 @@ export function HeroVisual() {
     return (
         <div className="relative w-full h-[500px] md:h-[700px] flex items-center justify-center">
 
-            {/* Glassy Background Circle */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] md:w-[600px] md:h-[600px] bg-gradient-to-tr from-primary/20 to-blue-400/10 rounded-full blur-[80px] -z-10" />
+            {/* Premium Glow Base */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] md:w-[700px] md:h-[700px] bg-gradient-to-tr from-primary/30 via-blue-400/10 to-purple-500/10 rounded-full blur-[120px] -z-10 opacity-60" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[500px] md:h-[500px] border border-primary/10 rounded-full -z-10 animate-pulse" />
 
             {/* Main Hero Image - Responsive Container */}
             <motion.div
@@ -33,14 +34,14 @@ export function HeroVisual() {
                 initial={{ opacity: 0, scale: 0.8, x: -30 }}
                 animate={{ opacity: 1, scale: 1, x: 0 }}
                 transition={{ delay: 0.6, type: "spring", stiffness: 200, damping: 20 }}
-                className="absolute bottom-[15%] left-[0%] md:left-[-2%] glass-card p-2.5 pr-4 flex items-center gap-3 z-20 hover:scale-105 transition-transform cursor-default"
+                className="absolute bottom-[18%] left-[0%] md:left-[-5%] glass-card p-3 pr-5 flex items-center gap-4 z-20 hover:scale-105 transition-all shadow-umbra-lg cursor-default group"
             >
-                <div className="w-8 h-8 bg-green-100/90 rounded-full flex items-center justify-center text-green-600 backdrop-blur-sm shadow-sm">
-                    <CheckCircle2 size={16} strokeWidth={3} />
+                <div className="w-10 h-10 bg-green-500/10 rounded-full flex items-center justify-center text-green-600 backdrop-blur-sm shadow-sm border border-green-500/20 group-hover:bg-green-500 group-hover:text-white transition-colors duration-500">
+                    <CheckCircle2 size={20} strokeWidth={3} />
                 </div>
                 <div>
-                    <div className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">Paid</div>
-                    <div className="text-[#35255e] font-bold text-sm leading-tight">₹250.00</div>
+                    <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Payment Sent</div>
+                    <div className="text-secondary font-black text-lg leading-tight">₹250.00</div>
                 </div>
             </motion.div>
 
@@ -49,14 +50,14 @@ export function HeroVisual() {
                 initial={{ opacity: 0, scale: 0.8, x: 30 }}
                 animate={{ opacity: 1, scale: 1, x: 0 }}
                 transition={{ delay: 0.9, type: "spring", stiffness: 200, damping: 20 }}
-                className="absolute top-[25%] right-[2%] md:right-[0%] glass-card p-2.5 pr-4 flex items-center gap-3 z-20 hover:scale-105 transition-transform cursor-default"
+                className="absolute top-[22%] right-[2%] md:right-[-2%] glass-card p-3 pr-5 flex items-center gap-4 z-20 hover:scale-105 transition-all shadow-umbra-lg cursor-default group"
             >
-                <div className="w-8 h-8 bg-amber-100/90 rounded-full flex items-center justify-center text-amber-600 backdrop-blur-sm shadow-sm">
-                    <Coins size={16} fill="currentColor" />
+                <div className="w-10 h-10 bg-amber-500/10 rounded-full flex items-center justify-center text-amber-600 backdrop-blur-sm shadow-sm border border-amber-500/20 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-500">
+                    <Coins size={20} fill="currentColor" />
                 </div>
                 <div>
-                    <div className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">Cashback</div>
-                    <div className="text-[#35255e] font-bold text-sm leading-tight">+50 Coins</div>
+                    <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Cashback Awarded</div>
+                    <div className="text-secondary font-black text-lg leading-tight lg:whitespace-nowrap">+50 Coins</div>
                 </div>
             </motion.div>
 

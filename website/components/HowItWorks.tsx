@@ -79,7 +79,7 @@ function StepCard({ number, title, desc, illustration }: { number: string, title
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             whileHover={{ y: -10 }}
-            className="group flex flex-col items-center text-center bg-white p-2 rounded-[2.5rem] shadow-soft border border-white/60 relative hover:shadow-2xl transition-all duration-500"
+            className="group flex flex-col items-center text-center bg-white p-2 rounded-[3.5rem] shadow-umbra-lg border border-white/60 relative hover:shadow-2xl transition-all duration-500"
         >
             <article className="flex flex-col items-center">
                 {/* Illustration Display */}

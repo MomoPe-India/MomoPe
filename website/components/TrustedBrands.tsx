@@ -22,14 +22,24 @@ export function TrustedBrands() {
     return (
         <section className="py-16 bg-white border-b border-gray-50 relative overflow-hidden">
             <div className="container mx-auto px-6 text-center mb-10">
-                <motion.p
+                <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    className="text-sm font-bold text-gray-400 uppercase tracking-widest"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-100 shadow-umbra-sm mb-4"
+                >
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                    <span className="text-xs font-black text-gray-500 uppercase tracking-[0.2em]">Live Network</span>
+                </motion.div>
+                <motion.h2
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.1 }}
+                    className="text-2xl md:text-3xl font-black text-secondary tracking-tight"
                 >
                     Trusted by 500+ Businesses in Kadapa
-                </motion.p>
+                </motion.h2>
             </div>
 
             <div className="relative flex flex-col gap-8 opacity-80">

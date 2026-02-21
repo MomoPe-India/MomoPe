@@ -9,9 +9,10 @@ export function HeroSection() {
     return (
         <section className="relative pt-28 pb-16 md:pt-40 md:pb-24 overflow-hidden">
 
-            {/* Background Gradients */}
-            <div className="absolute top-[-20%] right-[-10%] w-[70%] h-[70%] bg-primary/5 rounded-full blur-[120px] -z-10" />
-            <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-100/40 rounded-full blur-[100px] -z-10" />
+            {/* Background Gradients - Deeper & More Immersive */}
+            <div className="absolute top-[-20%] right-[-10%] w-[70%] h-[70%] bg-primary/10 rounded-full blur-[120px] -z-10 animate-pulse transition-opacity duration-1000" />
+            <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/5 rounded-full blur-[100px] -z-10" />
+            <div className="absolute top-[20%] left-[20%] w-[30%] h-[30%] bg-purple-500/5 rounded-full blur-[120px] -z-10" />
 
             {/* Floating Elements (Decorations) */}
             <motion.div
@@ -33,9 +34,9 @@ export function HeroSection() {
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border-primary/20 text-primary-dark font-semibold text-sm mb-6"
+                            className="inline-flex items-center gap-2 px-5 py-2 rounded-full glass border-primary/30 text-primary-dark font-bold text-sm mb-8 shadow-lg shadow-primary/10"
                         >
-                            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                            <div className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />
                             Payments 2.0 is Live
                         </motion.div>
 
@@ -43,9 +44,12 @@ export function HeroSection() {
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1 }}
-                            className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-black text-secondary tracking-tight mb-6 leading-[1.05]"
+                            className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-black text-secondary tracking-tight mb-8 leading-[1.02]"
                         >
-                            Scan. Pay. <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-dark">& Earn.</span>
+                            Scan. Pay. <br className="hidden sm:block" />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary-dark to-secondary animate-gradient-x drop-shadow-[0_0_15px_rgba(0,196,167,0.3)]">
+                                & Earn.
+                            </span>
                         </motion.h1>
 
                         <motion.p
@@ -81,7 +85,7 @@ export function HeroSection() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.5 }}
-                            className="mt-10 md:mt-12 p-5 rounded-2xl glass border border-white/40 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-5 sm:gap-6 w-full max-w-md sm:max-w-lg mx-auto lg:mx-0 backdrop-blur-xl bg-white/30"
+                            className="mt-12 md:mt-16 p-6 rounded-[2rem] glass border border-white/60 shadow-umbra-lg flex flex-col sm:flex-row items-center justify-between gap-5 sm:gap-8 w-full max-w-md sm:max-w-xl mx-auto lg:mx-0 backdrop-blur-2xl bg-white/40"
                         >
                             {/* Security & Power - Mobile: Side by Side, Desktop: Side by Side */}
                             <div className="flex flex-row items-center justify-center gap-3 sm:gap-5 w-full sm:w-auto">

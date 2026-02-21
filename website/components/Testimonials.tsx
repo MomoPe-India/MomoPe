@@ -83,7 +83,7 @@ export function Testimonials() {
                 {TESTIMONIALS.map((t, i) => (
                     <article
                         key={i}
-                        className="min-w-[350px] md:min-w-[450px] p-8 md:p-10 bg-white rounded-[2.5rem] border border-gray-100 snap-center hover:shadow-2xl hover:shadow-purple-900/10 transition-all duration-500 relative group flex flex-col"
+                        className="min-w-[350px] md:min-w-[450px] p-8 md:p-10 bg-white rounded-[3.5rem] border border-gray-100 snap-center shadow-umbra-lg hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 relative group flex flex-col"
                     >
                         {/* Quotemark */}
                         <div className="absolute top-8 right-8 text-primary/10 group-hover:text-primary/20 transition-colors">
