@@ -25,8 +25,8 @@ export function Navbar({ }: NavbarProps) {
 
     const pathname = usePathname();
 
-    // Default to 'dark' theme for Home and Merchant pages (Purple Hero), 'light' for others.
-    const effectiveTheme = (pathname === '/' || pathname === '/merchant') ? 'dark' : 'light';
+    // Default to 'dark' theme for Merchant page (Purple Hero), 'light' for others (including Home).
+    const effectiveTheme = (pathname === '/merchant') ? 'dark' : 'light';
 
     // Special case: Merchant page requests high-contrast (Pure White) logo
     const isHighContrast = pathname === '/merchant';
@@ -120,7 +120,7 @@ export function Navbar({ }: NavbarProps) {
                         <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/10 rounded-full blur-[80px] pointer-events-none" />
 
                         {/* Menu Content Container */}
-                        <div className="flex flex-col h-full pt-32 px-8 pb-32 overflow-y-auto relative z-10">
+                        <div className="flex flex-col h-full pt-20 px-6 pb-12 overflow-y-auto relative z-10">
 
                             {/* Navigation Links */}
                             <motion.div
@@ -135,7 +135,7 @@ export function Navbar({ }: NavbarProps) {
                                         }
                                     }
                                 }}
-                                className="flex flex-col gap-6"
+                                className="flex flex-col gap-4"
                             >
                                 <MobileNavLink href="/" onClick={() => setIsMobileMenuOpen(false)}>Home</MobileNavLink>
                                 <MobileNavLink href="/merchant" onClick={() => setIsMobileMenuOpen(false)}>For Merchants</MobileNavLink>
@@ -149,25 +149,25 @@ export function Navbar({ }: NavbarProps) {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.5, duration: 0.5 }}
-                                className="mt-auto pt-10"
+                                className="mt-8 pt-6"
                             >
                                 <Link
                                     href="https://whatsapp.com/channel/0029VbBhoLk7z4kiZU9cBz1U"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                     target="_blank"
-                                    className="w-full bg-[#00C4A7] text-white py-5 rounded-2xl font-bold text-xl text-center shadow-lg shadow-teal-500/20 active:scale-95 transition-transform flex items-center justify-center gap-3 mb-8"
+                                    className="w-full bg-[#00C4A7] text-white py-4 rounded-xl font-bold text-lg text-center shadow-lg shadow-teal-500/20 active:scale-95 transition-transform flex items-center justify-center gap-3 mb-6"
                                 >
-                                    <Smartphone size={24} />
+                                    <Smartphone size={20} />
                                     Get the App
                                 </Link>
 
-                                <div className="border-t border-gray-100 pt-8 mt-auto pb-10">
-                                    <p className="text-gray-400 text-sm font-medium mb-6 uppercase tracking-widest text-center">Follow Us</p>
-                                    <div className="flex justify-center gap-6 mb-8">
-                                        <SocialLink href="https://x.com/MomoPe_Deals" icon={<Twitter size={20} />} />
-                                        <SocialLink href="https://www.linkedin.com/company/momope/" icon={<Linkedin size={20} />} />
-                                        <SocialLink href="https://www.instagram.com/momope_india/" icon={<Instagram size={20} />} />
-                                        <SocialLink href="https://www.facebook.com/MomoPe.india" icon={<Facebook size={20} />} />
+                                <div className="border-t border-gray-100 pt-6 mt-auto pb-6">
+                                    <p className="text-gray-400 text-[10px] font-bold mb-4 uppercase tracking-widest text-center">Follow Us</p>
+                                    <div className="flex justify-center gap-5 mb-6">
+                                        <SocialLink href="https://x.com/MomoPe_Deals" icon={<Twitter size={18} />} />
+                                        <SocialLink href="https://www.linkedin.com/company/momope/" icon={<Linkedin size={18} />} />
+                                        <SocialLink href="https://www.instagram.com/momope_india/" icon={<Instagram size={18} />} />
+                                        <SocialLink href="https://www.facebook.com/MomoPe.india" icon={<Facebook size={18} />} />
                                     </div>
                                     <p className="text-center text-gray-400 text-xs">
                                         © 2026 MomoPe Digital Hub Pvt. Ltd.<br />All rights reserved.
@@ -206,7 +206,7 @@ function MobileNavLink({ href, onClick, children }: { href: string; onClick: () 
             <Link
                 href={href}
                 onClick={onClick}
-                className="text-4xl font-black text-[#35255e] py-3 block hover:text-[#00C4A7] transition-colors tracking-tight"
+                className="text-2xl font-bold text-[#35255e] py-2 block hover:text-[#00C4A7] transition-colors tracking-tight"
             >
                 {children}
             </Link>
@@ -216,7 +216,7 @@ function MobileNavLink({ href, onClick, children }: { href: string; onClick: () 
 
 function SocialLink({ href, icon }: { href: string, icon: React.ReactNode }) {
     return (
-        <a href={href} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 font-bold text-lg hover:bg-[#35255e] hover:text-white transition-all shadow-sm">
+        <a href={href} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 font-bold text-lg hover:bg-[#35255e] hover:text-white transition-all shadow-sm">
             {icon}
         </a>
     )

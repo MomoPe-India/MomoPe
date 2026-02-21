@@ -93,15 +93,15 @@ export function Footer() {
                 </div>
 
                 {/* Bottom Bar */}
-                <div className="pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-gray-500">
+                <div className="pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-white opacity-80">
                     <div className="flex flex-col md:flex-row gap-4 items-center">
                         <p>&copy; 2026 MomoPe Digital Hub Pvt. Ltd. All rights reserved.</p>
-                        <span className="hidden md:inline text-gray-700">|</span>
+                        <span className="hidden md:inline text-white/40">|</span>
                         <p>CIN: U63120AP2025PTC118821</p>
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <span>Made in India</span>
+                        <span className="text-white">Made in India</span>
                         {/* Indian Flag SVG */}
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" className="w-6 h-4 rounded-sm shadow-sm opacity-90">
                             <path fill="#f93" d="M0 0h900v200H0z" />

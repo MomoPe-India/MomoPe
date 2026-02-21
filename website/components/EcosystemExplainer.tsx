@@ -137,55 +137,33 @@ export function EcosystemExplainer() {
 
                 </div>
 
-                {/* 3 Pillars */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-24">
+                {/* 3 Pillars (Simplified & Responsive) */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mt-16 md:mt-24">
                     <Pillar
                         title="For You (User)"
                         desc="Your spending power increases. Every ₹1 spent = future savings."
                         color="bg-emerald-500"
-                        icon={<Coins size={32} className="text-white" />}
-                        illustration={
-                            <div className="relative w-full h-32 bg-emerald-50 rounded-2xl mb-6 overflow-hidden flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
-                                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d?q=80&w=200&auto=format&fit=crop')] bg-cover opacity-20" />
-                                <div className="z-10 bg-emerald-500 w-16 h-16 rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
-                                    <Users size={32} className="text-white" />
-                                </div>
-                            </div>
-                        }
+                        icon={<Users size={28} className="text-white" />}
                     />
                     <Pillar
                         title="For Business"
                         desc="Acquire customers for free. Pay only when they actually pay you."
                         color="bg-purple-500"
-                        icon={<Store size={32} className="text-white" />}
-                        illustration={
-                            <div className="relative w-full h-32 bg-purple-50 rounded-2xl mb-6 overflow-hidden flex items-center justify-center group-hover:bg-purple-100 transition-colors">
-                                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?q=80&w=200&auto=format&fit=crop')] bg-cover opacity-20" />
-                                <div className="z-10 bg-purple-500 w-16 h-16 rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
-                                    <Store size={32} className="text-white" />
-                                </div>
-                            </div>
-                        }
+                        icon={<Store size={28} className="text-white" />}
                     />
                     <Pillar
                         title="For Community"
                         desc="Money stays local. Helping Kadapa grow, one transaction at a time."
                         color="bg-orange-500"
-                        icon={<Users size={32} className="text-white" />}
-                        illustration={
-                            <div className="relative w-full h-32 bg-orange-50 rounded-2xl mb-6 overflow-hidden flex items-center justify-center group-hover:bg-orange-100 transition-colors">
-                                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?q=80&w=200&auto=format&fit=crop')] bg-cover opacity-20" />
-                                <div className="z-10 bg-orange-500 w-16 h-16 rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
-                                    <Users size={32} className="text-white" />
-                                </div>
-                            </div>
-                        }
+                        icon={<Users size={28} className="text-white" />}
                     />
                 </div>
             </div>
         </section>
     );
 }
+
+// ... internal components ...
 
 function OrbitingNode({ angle, color, icon, label, delay }: { angle: number, color: string, icon: React.ReactNode, label: string, delay: number }) {
     return (
@@ -236,12 +214,14 @@ function ParticleStream() {
     )
 }
 
-function Pillar({ title, desc, color, icon, illustration }: { title: string, desc: string, color: string, icon?: React.ReactNode, illustration?: React.ReactNode }) {
+function Pillar({ title, desc, color, icon }: { title: string, desc: string, color: string, icon: React.ReactNode }) {
     return (
-        <div className="p-6 rounded-3xl bg-gray-50 hover:bg-white hover:shadow-xl transition-all border border-transparent hover:border-gray-100 group h-full">
-            {illustration ? illustration : <div className={`w-12 h-1.5 rounded-full ${color} mb-6 group-hover:w-24 transition-all`} />}
+        <div className="flex flex-col items-start p-8 rounded-3xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all h-full">
+            <div className={`w-14 h-14 rounded-2xl ${color} flex items-center justify-center mb-6 shadow-sm transform group-hover:scale-105 transition-transform`}>
+                {icon}
+            </div>
             <h4 className="text-xl font-bold text-[#35255e] mb-3">{title}</h4>
-            <p className="text-gray-500 leading-relaxed text-sm">{desc}</p>
+            <p className="text-gray-500 leading-relaxed">{desc}</p>
         </div>
     );
 }
