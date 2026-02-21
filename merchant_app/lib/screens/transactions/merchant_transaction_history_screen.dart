@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
@@ -27,18 +28,13 @@ class _MerchantTransactionHistoryScreenState
   Widget build(BuildContext context) {
     final transactionsAsync = ref.watch(merchantTransactionsProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Transactions'),
-        elevation: 0,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: AppColors.primaryGradient,
-          ),
-        ),
-      ),
-      body: Column(
-        children: [
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light,
+      child: Scaffold(
+        body: Column(
+          children: [
+            // Premium Header
+            _buildHeader(context),
           // Filter Chips
           _buildFilterChips(),
           
@@ -99,31 +95,53 @@ class _MerchantTransactionHistoryScreenState
     );
   }
 
-  Widget _buildFilterChips() {
+  Widget _buildHeader(BuildContext context) {
     return Container(
-      color: Colors.white,
-      padding: AppSpacing.paddingAll16,
+      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, bottom: 20),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.primaryTeal,
+            AppColors.primaryTealDark,
+          ],
+        ),
+      ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Filter by Status',
-            style: AppTypography.bodySmall.copyWith(
-              color: AppColors.neutral600,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.space8),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Row(
               children: [
-                _buildFilterChip('All', 'all'),
-                const SizedBox(width: AppSpacing.space8),
-                _buildFilterChip('Success', 'success'),
-                const SizedBox(width: AppSpacing.space8),
+                IconButton(
+                  icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white, size: 20),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                Text(
+                  'TRANSACTIONS',
+                  style: AppTypography.labelLarge.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          // Filter Chips in Header
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                _buildFilterChip('All Orders', 'all'),
+                const SizedBox(width: 8),
+                _buildFilterChip('Successful', 'success'),
+                const SizedBox(width: 8),
                 _buildFilterChip('Pending', 'pending'),
-                const SizedBox(width: AppSpacing.space8),
+                const SizedBox(width: 8),
                 _buildFilterChip('Failed', 'failed'),
               ],
             ),
@@ -136,19 +154,25 @@ class _MerchantTransactionHistoryScreenState
   Widget _buildFilterChip(String label, String value) {
     final isSelected = _selectedFilter == value;
 
-    return FilterChip(
-      label: Text(label),
-      selected: isSelected,
-      onSelected: (selected) {
-        setState(() {
-          _selectedFilter = value;
-        });
-      },
-      selectedColor: AppColors.primaryTeal.withOpacity(0.2),
-      checkmarkColor: AppColors.primaryTeal,
-      labelStyle: AppTypography.bodyMedium.copyWith(
-        color: isSelected ? AppColors.primaryTeal : AppColors.neutral700,
-        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+    return GestureDetector(
+      onTap: () => setState(() => _selectedFilter = value),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.white : Colors.white.withOpacity(0.12),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? Colors.white : Colors.white.withOpacity(0.2),
+            width: 1,
+          ),
+        ),
+        child: Text(
+          label,
+          style: AppTypography.labelSmall.copyWith(
+            color: isSelected ? AppColors.primaryTeal : Colors.white,
+            fontWeight: isSelected ? FontWeight.w900 : FontWeight.w700,
+          ),
+        ),
       ),
     );
   }
@@ -225,9 +249,10 @@ class _MerchantTransactionHistoryScreenState
           ),
           child: Text(
             dateLabel,
-            style: AppTypography.bodyMedium.copyWith(
-              fontWeight: FontWeight.bold,
-              color: AppColors.neutral700,
+            style: AppTypography.labelSmall.copyWith(
+              fontWeight: FontWeight.w900,
+              color: AppColors.neutral500,
+              letterSpacing: 1.0,
             ),
           ),
         ),
@@ -249,94 +274,87 @@ class _MerchantTransactionHistoryScreenState
           ),
         );
       },
-      child: PremiumCard(
-        style: PremiumCardStyle.outlined,
-        child: Padding(
-          padding: AppSpacing.paddingAll16,
-          child: Row(
-            children: [
-              // Status Icon
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: _getStatusColor(txn.status).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  _getStatusIcon(txn.status),
-                  color: _getStatusColor(txn.status),
-                  size: 24,
-                ),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppColors.neutral200),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            // Status Icon
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: _getStatusColor(txn.status).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
               ),
-              
-              const SizedBox(width: AppSpacing.space16),
-
-              // Transaction Info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '₹${txn.grossAmount.toStringAsFixed(0)}',
-                      style: AppTypography.titleMedium.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.space4),
-                    Text(
-                      '${_formatTime(txn.createdAt)} • ${txn.paymentMethod.toUpperCase()}',
-                      style: AppTypography.bodySmall.copyWith(
-                        color: AppColors.neutral600,
-                      ),
-                    ),
-                    if (txn.coinAmount > 0) ...[
-                      const SizedBox(height: AppSpacing.space4),
-                      Text(
-                        '${txn.coinAmount.toStringAsFixed(0)} coins redeemed',
-                        style: AppTypography.bodySmall.copyWith(
-                          color: AppColors.rewardsGold,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
+              child: Icon(
+                _getStatusIcon(txn.status),
+                color: _getStatusColor(txn.status),
+                size: 18,
               ),
+            ),
+            
+            const SizedBox(width: 16),
 
-              // Earnings
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+            // Transaction Info
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (txn.netRevenue != null)
-                    Text(
-                      '₹${txn.netRevenue!.toStringAsFixed(0)}',
-                      style: AppTypography.titleMedium.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primaryTeal,
-                      ),
+                  Text(
+                    '₹${txn.grossAmount.toStringAsFixed(0)}',
+                    style: AppTypography.titleMedium.copyWith(
+                      fontWeight: FontWeight.w900,
+                      color: AppColors.neutral900,
                     ),
-                  const SizedBox(height: AppSpacing.space4),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: _getStatusColor(txn.status).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      txn.status.toUpperCase(),
-                      style: AppTypography.bodySmall.copyWith(
-                        color: _getStatusColor(txn.status),
-                        fontWeight: FontWeight.w600,
-                        fontSize: 10,
-                      ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '${_formatTime(txn.createdAt)} • ${txn.paymentMethod.toUpperCase()}',
+                    style: AppTypography.labelSmall.copyWith(
+                      color: AppColors.neutral500,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],
               ),
-            ],
-          ),
+            ),
+
+            // Earnings
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                if (txn.netRevenue != null)
+                  Text(
+                    '₹${txn.netRevenue!.toStringAsFixed(2)}',
+                    style: AppTypography.labelLarge.copyWith(
+                      fontWeight: FontWeight.w900,
+                      color: AppColors.primaryTeal,
+                    ),
+                  ),
+                if (txn.coinAmount > 0)
+                  Text(
+                    '${txn.coinAmount.toStringAsFixed(0)} coins',
+                    style: AppTypography.labelSmall.copyWith(
+                      color: AppColors.rewardsGold,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 10,
+                    ),
+                  ),
+              ],
+            ),
+          ],
         ),
       ),
     );

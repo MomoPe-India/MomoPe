@@ -1,20 +1,33 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'core/constants/supabase_constants.dart';
 import 'core/theme/app_theme.dart';
-import 'screens/auth/auth_wrapper.dart';
+import 'features/auth/screens/login_screen.dart';
+import 'screens/merchant_dashboard_screen.dart';
+import 'services/notification_service.dart';
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ✅ Supabase Initialization (Using Publishable Key)
+  // Initialize Firebase (required before messaging)
+  await Firebase.initializeApp();
+
+  // Register background message handler BEFORE runApp
+  NotificationService.registerBackgroundHandler();
+
+  // Initialize Supabase
   await Supabase.initialize(
-    url: 'https://wpnngcuoqtvgwhizkrwt.supabase.co',
-    anonKey: 'sb_publishable_4l_Wba3ezOuRjYv-QoTzHA_TBq6sfV6',
+    url: SupabaseConstants.url,
+    anonKey: SupabaseConstants.anonKey,
   );
 
-  runApp(const ProviderScope(child: MerchantApp()));
+  runApp(
+    const ProviderScope(
+      child: MerchantApp(),
+    ),
+  );
 }
 
 class MerchantApp extends StatelessWidget {
@@ -22,11 +35,18 @@ class MerchantApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ✅ FIX: Check for existing session — skip login screen for returning users.
+    // Supabase persists the session in secure storage; if a valid session exists,
+    // route directly to the dashboard instead of forcing re-login every launch.
+    final session = Supabase.instance.client.auth.currentSession;
+    final isLoggedIn = session != null && !session.isExpired;
+
     return MaterialApp(
-      title: 'MomoPe Merchant - Business Dashboard',
+      title: 'MomoPe Merchant',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: const AuthWrapper(),
+      home: isLoggedIn ? const MerchantDashboardScreen() : const LoginScreen(),
     );
   }
 }
+

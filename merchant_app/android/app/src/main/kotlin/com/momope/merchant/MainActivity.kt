@@ -1,4 +1,4 @@
-package com.momope.merchant_app
+package com.momope.merchant
 
 import io.flutter.embedding.android.FlutterActivity
 

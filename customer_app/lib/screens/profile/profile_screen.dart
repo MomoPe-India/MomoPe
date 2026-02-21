@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/widgets/widgets.dart';
@@ -6,6 +7,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../providers/auth_provider.dart';
+import '../../services/notification_service.dart';
 import '../../providers/coin_balance_provider.dart';
 import '../auth/login_screen.dart';
 
@@ -19,125 +21,191 @@ class ProfileScreen extends ConsumerWidget {
     final user = ref.watch(currentUserProvider);
     final coinBalanceAsync = ref.watch(coinBalanceProvider);
 
-    return Scaffold(
-      backgroundColor: AppColors.neutral100,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // Profile Header
-              _buildProfileHeader(context, user),
-              
-              const SizedBox(height: 16),
-              
-              // Account Stats
-              _buildAccountStats(coinBalanceAsync),
-              
-              const SizedBox(height: 24),
-              
-              // Menu Items
-              _buildMenuSection(context, ref, user),
-              
-              const SizedBox(height: 24),
-            ],
-          ),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light.copyWith(
+        statusBarColor: Colors.transparent,
+      ),
+      child: Scaffold(
+        backgroundColor: AppColors.neutral100,
+        body: CustomScrollView(
+          slivers: [
+            // Premium Header
+            _buildSliverHeader(context, user),
+            
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 24.0),
+                child: Column(
+                  children: [
+                    // Account Stats with progress
+                    _buildAccountStats(coinBalanceAsync),
+                    
+                    const SizedBox(height: 32),
+                    
+                    // Menu Sections
+                    _buildMenuSection(context, ref, user),
+                    
+                    const SizedBox(height: 48),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildProfileHeader(BuildContext context, User? user) {
+  Widget _buildSliverHeader(BuildContext context, User? user) {
     final displayName = user?.userMetadata?['full_name'] ?? 
                        user?.userMetadata?['name'] ?? 
                        'MomoPe User';
     final email = user?.email ?? '';
-    final phone = user?.phone ?? user?.userMetadata?['phone'] ?? '';
 
-    return Container(
-      width: double.infinity,
-      padding: AppSpacing.paddingAll24,
-      decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
-      ),
-      child: Column(
-        children: [
-          // Avatar
-          Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: Colors.white,
-                width: 4,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Center(
-              child: Text(
-                displayName.substring(0, 1).toUpperCase(),
-                style: AppTypography.displayLarge.copyWith(
-                  color: AppColors.primaryTeal,
-                  fontWeight: FontWeight.bold,
+    return SliverAppBar(
+      expandedHeight: 280,
+      pinned: true,
+      stretch: true,
+      backgroundColor: AppColors.secondaryNavy,
+      elevation: 0,
+      flexibleSpace: FlexibleSpaceBar(
+        stretchModes: const [StretchMode.zoomBackground],
+        background: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Background Gradient
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppColors.secondaryNavy,
+                    AppColors.secondaryNavyDark,
+                  ],
                 ),
               ),
             ),
-          ),
-          
-          const SizedBox(height: 16),
-          
-          // Name
-          Text(
-            displayName,
-            style: AppTypography.titleLarge.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          
-          const SizedBox(height: 8),
-          
-          // Contact Info
-          if (phone.isNotEmpty)
-            Text(
-              phone,
-              style: AppTypography.bodyMedium.copyWith(
-                color: Colors.white.withOpacity(0.9),
+            // Decorative shapes
+            Positioned(
+              top: -50,
+              right: -50,
+              child: CircleAvatar(
+                radius: 120,
+                backgroundColor: AppColors.primaryTeal.withOpacity(0.05),
               ),
             ),
-          
-          if (email.isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Text(
-              email,
-              style: AppTypography.bodySmall.copyWith(
-                color: Colors.white.withOpacity(0.8),
+            
+            // Profile Info Content
+            SafeArea(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Glassmorphism Profile Card
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 24),
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.2),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        // Avatar with depth
+                        Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.primaryTeal.withOpacity(0.3),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child: Text(
+                              displayName.substring(0, 1).toUpperCase(),
+                              style: AppTypography.displaySmall.copyWith(
+                                color: AppColors.primaryTeal,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        // Name and Level
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                displayName,
+                                style: AppTypography.headlineSmall.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 2,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      gradient: AppColors.goldGradient,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(
+                                          Icons.workspace_premium_rounded,
+                                          color: Colors.white,
+                                          size: 14,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          'GOLD MEMBER',
+                                          style: AppTypography.overline.copyWith(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w800,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                email,
+                                style: AppTypography.bodySmall.copyWith(
+                                  color: Colors.white.withOpacity(0.7),
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
-          
-          const SizedBox(height: 16),
-          
-          // Edit Profile Button
-          PremiumButton(
-            text: 'Edit Profile',
-            icon: Icons.edit_outlined,
-            onPressed: () {
-              // TODO: Navigate to edit profile screen
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Edit profile coming soon!')),
-              );
-            },
-            style: PremiumButtonStyle.secondary,
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -150,30 +218,81 @@ class ProfileScreen extends ConsumerWidget {
         
         return Padding(
           padding: AppSpacing.paddingH16,
-          child: Row(
+          child: Column(
             children: [
-              Expanded(
-                child: _buildStatCard(
-                  icon: Icons.stars_rounded,
-                  iconColor: AppColors.rewardsGold,
-                  label: 'Total Coins Earned',
-                  value: totalCoins.toString(),
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildStatCard(
+                      icon: Icons.stars_rounded,
+                      iconColor: AppColors.rewardsGold,
+                      label: 'Total Earned',
+                      value: totalCoins.toString(),
+                      subtitle: 'Lifetime coins',
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildStatCard(
+                      icon: Icons.wallet_rounded,
+                      iconColor: AppColors.primaryTeal,
+                      label: 'Available',
+                      value: availableCoins.toString(),
+                      subtitle: 'Ready to spend',
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildStatCard(
-                  icon: Icons.account_balance_wallet_outlined,
-                  iconColor: AppColors.primaryTeal,
-                  label: 'Available',
-                  value: availableCoins.toString(),
+              const SizedBox(height: 16),
+              // Progress towards next level
+              PremiumCard(
+                style: PremiumCardStyle.elevated,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Next Level Progress',
+                          style: AppTypography.titleSmall.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          '750/1000',
+                          style: AppTypography.bodySmall.copyWith(
+                            color: AppColors.primaryTeal,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(
+                        value: 0.75,
+                        minHeight: 8,
+                        backgroundColor: AppColors.neutral200,
+                        valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primaryTeal),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Earn 250 more coins to reach Platinum level',
+                      style: AppTypography.caption.copyWith(
+                        color: AppColors.neutral600,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const ShimmerLoading(height: 120),
       error: (_, __) => const SizedBox.shrink(),
     );
   }
@@ -183,27 +302,40 @@ class ProfileScreen extends ConsumerWidget {
     required Color iconColor,
     required String label,
     required String value,
+    required String subtitle,
   }) {
     return PremiumCard(
       style: PremiumCardStyle.elevated,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: iconColor, size: 32),
-          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Icon(icon, color: iconColor, size: 28),
+              Icon(Icons.trending_up_rounded, color: AppColors.successGreen.withOpacity(0.5), size: 16),
+            ],
+          ),
+          const SizedBox(height: 16),
           Text(
             value,
-            style: AppTypography.titleLarge.copyWith(
-              fontWeight: FontWeight.bold,
+            style: AppTypography.amountLarge.copyWith(
               color: AppColors.neutral900,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             label,
-            style: AppTypography.bodySmall.copyWith(
-              color: AppColors.neutral600,
+            style: AppTypography.titleSmall.copyWith(
+              color: AppColors.neutral800,
+              fontSize: 13,
             ),
-            textAlign: TextAlign.center,
+          ),
+          Text(
+            subtitle,
+            style: AppTypography.caption.copyWith(
+              color: AppColors.neutral500,
+            ),
           ),
         ],
       ),
@@ -211,120 +343,149 @@ class ProfileScreen extends ConsumerWidget {
   }
 
   Widget _buildMenuSection(BuildContext context, WidgetRef ref, User? user) {
+    return Column(
+      children: [
+        _buildMenuGroup(
+          title: 'FINANCIAL',
+          items: [
+            _MenuItemData(
+              icon: Icons.qr_code_rounded,
+              title: 'My QR Code',
+              subtitle: 'Show your receiving QR',
+              iconColor: AppColors.primaryTeal,
+              onTap: () => _showComingSoon(context, 'My QR Code'),
+            ),
+            _MenuItemData(
+              icon: Icons.account_balance_rounded,
+              title: 'Linked Bank Accounts',
+              subtitle: 'Manage your UPI handles',
+              iconColor: AppColors.infoBlue,
+              onTap: () => _showComingSoon(context, 'Linked Bank Accounts'),
+            ),
+            _MenuItemData(
+              icon: Icons.history_edu_rounded,
+              title: 'Transaction Limits',
+              subtitle: 'Check your daily limits',
+              iconColor: AppColors.accentOrange,
+              onTap: () => _showComingSoon(context, 'Transaction Limits'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        _buildMenuGroup(
+          title: 'SECURITY & PRIVACY',
+          items: [
+            _MenuItemData(
+              icon: Icons.fingerprint_rounded,
+              title: 'Biometric Unlock',
+              subtitle: 'Face ID / Fingerprint',
+              iconColor: AppColors.successGreen,
+              onTap: () => _showComingSoon(context, 'Biometrics'),
+            ),
+            _MenuItemData(
+              icon: Icons.lock_outline_rounded,
+              title: 'App PIN',
+              subtitle: 'Secure your payments',
+              iconColor: AppColors.warningAmber,
+              onTap: () => _showComingSoon(context, 'App PIN'),
+            ),
+            _MenuItemData(
+              icon: Icons.privacy_tip_outlined,
+              title: 'Data Privacy',
+              subtitle: 'Manage what you share',
+              iconColor: AppColors.neutral600,
+              onTap: () => _showComingSoon(context, 'Privacy settings'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        _buildMenuGroup(
+          title: 'PREFERENCES',
+          items: [
+            _MenuItemData(
+              icon: Icons.notifications_active_outlined,
+              title: 'Notifications',
+              subtitle: 'Alerts & updates',
+              iconColor: AppColors.infoBlue,
+              onTap: () => _showComingSoon(context, 'Notifications'),
+            ),
+            _MenuItemData(
+              icon: Icons.language_rounded,
+              title: 'Language',
+              subtitle: 'Choose your preference',
+              iconColor: AppColors.neutral600,
+              onTap: () => _showComingSoon(context, 'Language'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        _buildMenuGroup(
+          title: 'SUPPORT',
+          items: [
+            _MenuItemData(
+              icon: Icons.headset_mic_outlined,
+              title: 'Help & Support',
+              subtitle: '24/7 technical assistance',
+              iconColor: AppColors.primaryTeal,
+              onTap: () => _showComingSoon(context, 'Support'),
+            ),
+            _MenuItemData(
+              icon: Icons.info_outline_rounded,
+              title: 'About MomoPe',
+              subtitle: 'Version 1.0.0',
+              iconColor: AppColors.neutral500,
+              onTap: () => _showComingSoon(context, 'About'),
+            ),
+            _MenuItemData(
+              icon: Icons.logout_rounded,
+              title: 'Logout',
+              subtitle: 'Securely sign out',
+              iconColor: AppColors.errorRed,
+              onTap: () => _handleLogout(context, ref),
+              showArrow: false,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMenuGroup({
+    required String title,
+    required List<_MenuItemData> items,
+  }) {
     return Padding(
       padding: AppSpacing.paddingH16,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Account',
-            style: AppTypography.titleMedium.copyWith(
-              fontWeight: FontWeight.bold,
-              color: AppColors.neutral900,
-            ),
-          ),
-          const SizedBox(height: 12),
-          
-          PremiumCard(
-            style: PremiumCardStyle.elevated,
-            padding: EdgeInsets.zero,
-            child: Column(
-              children: [
-                _buildMenuItem(
-                  context: context,
-                  icon: Icons.verified_user_outlined,
-                  iconColor: AppColors.primaryTeal,
-                  title: 'KYC Verification',
-                  subtitle: 'Complete verification',
-                  onTap: () => _showComingSoon(context, 'KYC verification'),
-                ),
-                _buildDivider(),
-                _buildMenuItem(
-                  context: context,
-                  icon: Icons.credit_card_outlined,
-                  iconColor: AppColors.primaryTeal,
-                  title: 'Payment Methods',
-                  subtitle: 'Manage UPI & cards',
-                  onTap: () => _showComingSoon(context, 'Payment methods'),
-                ),
-                _buildDivider(),
-                _buildMenuItem(
-                  context: context,
-                  icon: Icons.notifications_outlined,
-                  iconColor: AppColors.primaryTeal,
-                  title: 'Notifications',
-                  subtitle: 'Alerts & updates',
-                  onTap: () => _showComingSoon(context, 'Notifications'),
-                ),
-                _buildDivider(),
-                _buildMenuItem(
-                  context: context,
-                  icon: Icons.card_giftcard_outlined,
-                  iconColor: AppColors.rewardsGold,
-                  title: 'Referral Program',
-                  subtitle: 'Invite & earn rewards',
-                  onTap: () => _showComingSoon(context, 'Referral program'),
-                ),
-              ],
-            ),
-          ),
-          
-          const SizedBox(height: 24),
-          
-          Text(
-            'Support',
-            style: AppTypography.titleMedium.copyWith(
-              fontWeight: FontWeight.bold,
-              color: AppColors.neutral900,
-            ),
-          ),
-          const SizedBox(height: 12),
-          
-          PremiumCard(
-            style: PremiumCardStyle.elevated,
-            padding: EdgeInsets.zero,
-            child: Column(
-              children: [
-                _buildMenuItem(
-                  context: context,
-                  icon: Icons.help_outline,
-                  iconColor: AppColors.neutral600,
-                  title: 'Help & Support',
-                  subtitle: 'FAQs & contact us',
-                  onTap: () => _showComingSoon(context, 'Help & support'),
-                ),
-                _buildDivider(),
-                _buildMenuItem(
-                  context: context,
-                  icon: Icons.settings_outlined,
-                  iconColor: AppColors.neutral600,
-                  title: 'Settings',
-                  subtitle: 'App preferences',
-                  onTap: () => _showComingSoon(context, 'Settings'),
-                ),
-                _buildDivider(),
-                _buildMenuItem(
-                  context: context,
-                  icon: Icons.logout,
-                  iconColor: AppColors.errorRed,
-                  title: 'Logout',
-                  subtitle: 'Sign out of your account',
-                  onTap: () => _handleLogout(context, ref),
-                  showArrow: false,
-                ),
-              ],
-            ),
-          ),
-          
-          const SizedBox(height: 24),
-          
-          // App Version
-          Center(
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0, bottom: 8.0),
             child: Text(
-              'MomoPe v1.0.0',
-              style: AppTypography.bodySmall.copyWith(
+              title,
+              style: AppTypography.overline.copyWith(
                 color: AppColors.neutral500,
+                fontWeight: FontWeight.w800,
               ),
+            ),
+          ),
+          PremiumCard(
+            style: PremiumCardStyle.elevated,
+            padding: EdgeInsets.zero,
+            child: Column(
+              children: List.generate(items.length, (index) {
+                final item = items[index];
+                return Column(
+                  children: [
+                    _buildMenuItem(item),
+                    if (index < items.length - 1)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 64.0),
+                        child: Divider(height: 1, color: AppColors.neutral200),
+                      ),
+                  ],
+                );
+              }),
             ),
           ),
         ],
@@ -332,31 +493,23 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildMenuItem({
-    required BuildContext context,
-    required IconData icon,
-    required Color iconColor,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-    bool showArrow = true,
-  }) {
+  Widget _buildMenuItem(_MenuItemData item) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: onTap,
+        onTap: item.onTap,
         child: Padding(
-          padding: AppSpacing.paddingAll16,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: Row(
             children: [
               Container(
-                width: 40,
-                height: 40,
+                width: 44,
+                height: 44,
                 decoration: BoxDecoration(
-                  color: iconColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
+                  color: item.iconColor.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(icon, color: iconColor, size: 22),
+                child: Icon(item.icon, color: item.iconColor, size: 22),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -364,14 +517,15 @@ class ProfileScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      title,
+                      item.title,
                       style: AppTypography.bodyLarge.copyWith(
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.neutral900,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 1),
                     Text(
-                      subtitle,
+                      item.subtitle,
                       style: AppTypography.bodySmall.copyWith(
                         color: AppColors.neutral600,
                       ),
@@ -379,10 +533,10 @@ class ProfileScreen extends ConsumerWidget {
                   ],
                 ),
               ),
-              if (showArrow)
+              if (item.showArrow)
                 Icon(
-                  Icons.arrow_forward_ios,
-                  size: 16,
+                  Icons.arrow_forward_ios_rounded,
+                  size: 14,
                   color: AppColors.neutral400,
                 ),
             ],
@@ -392,21 +546,19 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildDivider() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 72),
-      child: Divider(
-        height: 1,
-        color: AppColors.neutral200,
-      ),
-    );
-  }
-
   void _showComingSoon(BuildContext context, String feature) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('$feature coming soon!'),
+        content: Row(
+          children: [
+            const Icon(Icons.auto_awesome, color: Colors.white, size: 20),
+            const SizedBox(width: 12),
+            Text('$feature coming soon!'),
+          ],
+        ),
         backgroundColor: AppColors.primaryTeal,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
@@ -434,6 +586,12 @@ class ProfileScreen extends ConsumerWidget {
     );
 
     if (confirm == true && context.mounted) {
+      try {
+        await NotificationService().clearFcmToken();
+      } catch (e) {
+        debugPrint('Error clearing FCM token: $e');
+      }
+
       await Supabase.instance.client.auth.signOut();
       
       if (context.mounted) {
@@ -443,5 +601,40 @@ class ProfileScreen extends ConsumerWidget {
         );
       }
     }
+  }
+}
+
+class _MenuItemData {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final Color iconColor;
+  final VoidCallback onTap;
+  final bool showArrow;
+
+  const _MenuItemData({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.iconColor,
+    required this.onTap,
+    this.showArrow = true,
+  });
+}
+
+class ShimmerLoading extends StatelessWidget {
+  final double height;
+  const ShimmerLoading({super.key, required this.height});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: height,
+      margin: AppSpacing.paddingH16,
+      decoration: BoxDecoration(
+        color: AppColors.neutral200,
+        borderRadius: BorderRadius.circular(16),
+      ),
+    );
   }
 }

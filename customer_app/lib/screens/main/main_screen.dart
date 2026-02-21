@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
+import '../../services/notification_service.dart';
 import '../home/home_screen.dart';
 import '../transactions/transaction_history_screen.dart';
 import '../profile/profile_screen.dart';
@@ -19,14 +20,23 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
-  
-  final List<Widget> _screens = const [
-    HomeScreen(),
-    ExploreScreen(),
-    SizedBox.shrink(), // Scan tab handled separately
-    TransactionHistoryScreen(),
-    ProfileScreen(),
-  ];
+
+  late final List<Widget> _screens;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize FCM notifications after user is authenticated
+    NotificationService().initialize();
+
+    _screens = [
+      HomeScreen(onProfileTap: () => setState(() => _currentIndex = 4)),
+      const ExploreScreen(),
+      const SizedBox.shrink(), // Scan tab handled separately
+      const TransactionHistoryScreen(),
+      const ProfileScreen(),
+    ];
+  }
 
   final List<_NavItem> _navItems = const [
     _NavItem(
@@ -89,12 +99,22 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ) ?? false;
       },
-      child: Scaffold(
-        body: IndexedStack(
-          index: _currentIndex,
-          children: _screens,
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: (_currentIndex == 4
+                ? SystemUiOverlayStyle.light
+                : SystemUiOverlayStyle.dark)
+            .copyWith(
+          statusBarColor: Colors.transparent,
+          systemNavigationBarColor: Colors.white,
+          systemNavigationBarIconBrightness: Brightness.dark,
         ),
-        bottomNavigationBar: _buildPremiumBottomNavBar(),
+        child: Scaffold(
+          body: IndexedStack(
+            index: _currentIndex,
+            children: _screens,
+          ),
+          bottomNavigationBar: _buildPremiumBottomNavBar(),
+        ),
       ),
     );
   }
@@ -104,12 +124,19 @@ class _MainScreenState extends State<MainScreen> {
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(32),
         boxShadow: [
+          // Sophisticated layered shadows for premium "lift"
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+            spreadRadius: 0,
+          ),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
             spreadRadius: 0,
           ),
         ],
@@ -117,10 +144,11 @@ class _MainScreenState extends State<MainScreen> {
       child: SafeArea(
         top: false,
         child: Container(
-          height: 70,
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          height: 76,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: List.generate(
               _navItems.length,
               (index) => _buildNavItem(index),
@@ -134,7 +162,48 @@ class _MainScreenState extends State<MainScreen> {
   Widget _buildNavItem(int index) {
     final item = _navItems[index];
     final isActive = _currentIndex == index;
-    final isScanTab = index == 2; // Center scan tab
+    final isScanTab = index == 2;
+
+    if (isScanTab) {
+      return Expanded(
+        child: GestureDetector(
+          onTap: () {
+            HapticFeedback.heavyImpact();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const QRScannerScreen(),
+              ),
+            );
+          },
+          child: Transform.translate(
+            offset: const Offset(0, -12),
+            child: Container(
+              height: 64,
+              width: 64,
+              decoration: BoxDecoration(
+                gradient: AppColors.primaryGradient,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  // Active glow effect
+                  BoxShadow(
+                    color: AppColors.primaryTeal.withOpacity(0.4),
+                    blurRadius: 16,
+                    offset: const Offset(0, 8),
+                    spreadRadius: 0,
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.qr_code_scanner_rounded,
+                color: Colors.white,
+                size: 32,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
 
     return Expanded(
       child: Material(
@@ -142,42 +211,28 @@ class _MainScreenState extends State<MainScreen> {
         child: InkWell(
           onTap: () {
             HapticFeedback.lightImpact();
-            if (isScanTab) {
-              // Open QR scanner as full screen
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const QRScannerScreen(),
-                ),
-              );
-            } else {
-              setState(() => _currentIndex = index);
-            }
+            setState(() => _currentIndex = index);
           },
           splashColor: AppColors.primaryTeal.withOpacity(0.1),
           highlightColor: AppColors.primaryTeal.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 4),
+            padding: const EdgeInsets.symmetric(vertical: 8),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
                   isActive ? item.activeIcon : item.icon,
-                  color: isActive
-                      ? AppColors.primaryTeal
-                      : AppColors.neutral400,
+                  color: isActive ? AppColors.primaryTeal : AppColors.neutral400,
                   size: 24,
                 ),
                 const SizedBox(height: 4),
                 Text(
                   item.label,
                   style: AppTypography.bodySmall.copyWith(
-                    color: isActive
-                        ? AppColors.primaryTeal
-                        : AppColors.neutral400,
-                    fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
+                    color: isActive ? AppColors.primaryTeal : AppColors.neutral400,
+                    fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
                     fontSize: 11,
                   ),
                 ),

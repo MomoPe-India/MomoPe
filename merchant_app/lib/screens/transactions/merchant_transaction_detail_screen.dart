@@ -18,45 +18,48 @@ class MerchantTransactionDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Transaction Details'),
-        elevation: 0,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: AppColors.primaryGradient,
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light,
+      child: Scaffold(
+        body: Column(
           children: [
-            // Status Banner
-            _buildStatusBanner(),
+            // Premium Header
+            _buildHeader(context),
+            
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    // Status Card with Glassmorphism
+                    _buildStatusCard(),
 
-            Padding(
-              padding: AppSpacing.paddingAll16,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Transaction Info
-                  _buildInfoSection(),
+                    Padding(
+                      padding: AppSpacing.paddingAll16,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Transaction Info
+                          _buildInfoSection(),
 
-                  const SizedBox(height: AppSpacing.space24),
+                          const SizedBox(height: AppSpacing.space24),
 
-                  // Payment Breakdown
-                  _buildPaymentBreakdown(),
+                          // Payment Breakdown
+                          _buildPaymentBreakdown(),
 
-                  const SizedBox(height: AppSpacing.space24),
+                          const SizedBox(height: AppSpacing.space24),
 
-                  // Your Earnings
-                  if (transaction.grossRevenue != null) _buildEarningsBreakdown(),
+                          // Your Earnings
+                          if (transaction.grossRevenue != null) _buildEarningsBreakdown(),
 
-                  const SizedBox(height: AppSpacing.space24),
+                          const SizedBox(height: AppSpacing.space24),
 
-                  // Transaction ID
-                  _buildTransactionId(context),
-                ],
+                          // Transaction ID
+                          _buildTransactionId(context),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -65,39 +68,79 @@ class MerchantTransactionDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusBanner() {
+  Widget _buildHeader(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, bottom: 20),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.primaryTeal,
+            AppColors.primaryTealDark,
+          ],
+        ),
+      ),
+      child: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white, size: 20),
+            onPressed: () => Navigator.pop(context),
+          ),
+          Text(
+            'TRANSACTION DETAILS',
+            style: AppTypography.labelLarge.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.2,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusCard() {
     final color = _getStatusColor();
     final icon = _getStatusIcon();
     final message = _getStatusMessage();
 
     return Container(
-      width: double.infinity,
-      padding: AppSpacing.paddingAll20,
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        border: Border(
-          bottom: BorderSide(color: color, width: 3),
-        ),
+        color: color.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: color.withOpacity(0.2), width: 1.5),
       ),
       child: Row(
         children: [
-          Icon(icon, color: color, size: 32),
-          const SizedBox(width: AppSpacing.space16),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.2),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 32),
+          ),
+          const SizedBox(width: 20),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   transaction.status.toUpperCase(),
-                  style: AppTypography.titleMedium.copyWith(
+                  style: AppTypography.titleLarge.copyWith(
                     color: color,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 0.5,
                   ),
                 ),
                 Text(
                   message,
-                  style: AppTypography.bodySmall.copyWith(
+                  style: AppTypography.labelSmall.copyWith(
                     color: color.withOpacity(0.8),
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
@@ -108,6 +151,7 @@ class MerchantTransactionDetailScreen extends StatelessWidget {
     );
   }
 
+
   Widget _buildInfoSection() {
     return PremiumCard(
       style: PremiumCardStyle.elevated,
@@ -117,9 +161,11 @@ class MerchantTransactionDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Transaction Information',
-              style: AppTypography.titleMedium.copyWith(
-                fontWeight: FontWeight.bold,
+              'TRANSACTION INFO',
+              style: AppTypography.labelSmall.copyWith(
+                color: AppColors.neutral500,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.2,
               ),
             ),
             const SizedBox(height: AppSpacing.space16),
@@ -155,9 +201,11 @@ class MerchantTransactionDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Payment Breakdown',
-              style: AppTypography.titleMedium.copyWith(
-                fontWeight: FontWeight.bold,
+              'PAYMENT BREAKDOWN',
+              style: AppTypography.labelSmall.copyWith(
+                color: AppColors.neutral500,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.2,
               ),
             ),
             const SizedBox(height: AppSpacing.space16),
@@ -229,10 +277,11 @@ class MerchantTransactionDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Your Earnings',
-              style: AppTypography.titleMedium.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+              'YOUR EARNINGS',
+              style: AppTypography.labelSmall.copyWith(
+                color: Colors.white.withOpacity(0.8),
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.2,
               ),
             ),
             const SizedBox(height: AppSpacing.space16),
@@ -271,10 +320,11 @@ class MerchantTransactionDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Transaction ID',
-              style: AppTypography.bodyMedium.copyWith(
-                color: AppColors.neutral600,
-                fontWeight: FontWeight.w500,
+              'TRANSACTION ID',
+              style: AppTypography.labelSmall.copyWith(
+                color: AppColors.neutral500,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.2,
               ),
             ),
             const SizedBox(height: AppSpacing.space8),

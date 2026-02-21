@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-teal: #00C4A7;
+  --brand-teal-light: #00E5CC;
+  --brand-dark: #0B0F19;
+  --brand-card: #111827;
+  --brand-border: rgba(255, 255, 255, 0.08);
+  --sidebar-width: 240px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background-color: var(--brand-dark);
+  color: #e2e8f0;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+/* Brand utilities */
+@layer utilities {
+  .bg-card { background: var(--brand-card); }
+  .border-subtle { border-color: var(--brand-border); }
+  .text-teal { color: var(--brand-teal); }
+  .bg-teal { background-color: var(--brand-teal); }
+  .ring-teal { --tw-ring-color: var(--brand-teal); }
+  .glow-teal { box-shadow: 0 0 20px rgba(0, 196, 167, 0.25); }
+}

@@ -324,10 +324,69 @@ serve(async (req) => {
         console.log("Transaction processed successfully:", txnid);
 
         // ========================================================================
-        // STEP 6: SEND NOTIFICATION (Optional - implement later)
+        // STEP 6: TRIGGER REFERRAL REWARD (if applicable)
+        // Fire-and-forget: process-referral checks if user was referred
+        // Only triggers on qualifying payments (fiat_amount >= 100)
         // ========================================================================
-        // TODO: Send push notification to user (Firebase Cloud Messaging)
-        // TODO: Send email notification to merchant
+        if (fiatAmount >= 100) {
+            const referralUrl = `${Deno.env.get('SUPABASE_URL')}/functions/v1/process-referral`;
+            fetch(referralUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+                    'X-Internal-Secret': Deno.env.get('INTERNAL_SECRET') ?? '',
+                },
+                body: JSON.stringify({
+                    user_id: transaction.user_id,
+                    transaction_id: txnid,
+                    fiat_amount: fiatAmount,
+                }),
+            }).catch((err: Error) => console.warn('[payu-webhook] Referral trigger failed (non-critical):', err));
+        }
+
+        // ========================================================================
+        // STEP 7: SEND PUSH NOTIFICATIONS (Fire-and-forget)
+        // ========================================================================
+        const notifyUrl = `${Deno.env.get('SUPABASE_URL')}/functions/v1/send-notification`;
+        // ✅ Include X-Internal-Secret so send-notification can verify this is a trusted caller
+        const notifyHeaders = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+            'X-Internal-Secret': Deno.env.get('INTERNAL_SECRET') ?? '',
+        };
+
+        // Notify user: payment success + coins earned
+        fetch(notifyUrl, {
+            method: 'POST',
+            headers: notifyHeaders,
+            body: JSON.stringify({
+                user_id: transaction.user_id,
+                title: '✅ Payment Successful!',
+                body: `₹${fiatAmount.toFixed(0)} paid. You earned ${coinsEarned} MomoPe coins! 🎉`,
+                data: {
+                    type: 'payment_success',
+                    transaction_id: txnid,
+                    coins_earned: String(coinsEarned),
+                },
+            }),
+        }).catch((err: Error) => console.warn('[payu-webhook] User notification failed (non-critical):', err));
+
+        // Notify merchant: payment received
+        fetch(notifyUrl, {
+            method: 'POST',
+            headers: notifyHeaders,
+            body: JSON.stringify({
+                merchant_id: transaction.merchant_id,
+                title: '💰 Payment Received!',
+                body: `₹${grossAmount.toFixed(0)} received from a customer.`,
+                data: {
+                    type: 'payment_received',
+                    transaction_id: txnid,
+                    amount: String(grossAmount),
+                },
+            }),
+        }).catch((err: Error) => console.warn('[payu-webhook] Merchant notification failed (non-critical):', err));
 
         return new Response("OK", { status: 200 });
     } catch (error) {

@@ -26,44 +26,56 @@ class AppDesignTokens {
   );
 
   // ============================================================================
-  // ELEVATION & SHADOWS
+  // ELEVATION & SHADOWS (Umbra Shadow System)
   // ============================================================================
-
-  /// Subtle depth (Cards, containers)
-  static const List<BoxShadow> elevation1 = [
+  
+  /// Surface Shadow - Subtle depth for cards
+  static const List<BoxShadow> shadowUmbraSurface = [
     BoxShadow(
-      color: Color(0x0A000000), // 4% black
+      color: Color(0x080B0F19), // 3% Navy
       blurRadius: 4,
       offset: Offset(0, 2),
     ),
-  ];
-
-  /// Medium depth (Floating elements, buttons)
-  static const List<BoxShadow> elevation2 = [
     BoxShadow(
-      color: Color(0x14000000), // 8% black
-      blurRadius: 8,
+      color: Color(0x050B0F19), // 2% Navy
+      blurRadius: 10,
       offset: Offset(0, 4),
     ),
   ];
 
-  /// High depth (Modals, important CTAs)
-  static const List<BoxShadow> elevation3 = [
+  /// Medium Shadow - For interactive elements
+  static const List<BoxShadow> shadowUmbraMedium = [
     BoxShadow(
-      color: Color(0x1F000000), // 12% black
-      blurRadius: 16,
+      color: Color(0x120B0F19), // 7% Navy
+      blurRadius: 8,
+      offset: Offset(0, 4),
+    ),
+    BoxShadow(
+      color: Color(0x0A0B0F19), // 4% Navy
+      blurRadius: 20,
       offset: Offset(0, 8),
     ),
   ];
 
-  /// Extra high (Full-screen overlays)
-  static const List<BoxShadow> elevation4 = [
+  /// High Shadow - For modals and CTAs
+  static const List<BoxShadow> shadowUmbraHigh = [
     BoxShadow(
-      color: Color(0x29000000), // 16% black
-      blurRadius: 24,
-      offset: Offset(0, 12),
+      color: Color(0x1F0B0F19), // 12% Navy
+      blurRadius: 16,
+      offset: Offset(0, 8),
+    ),
+    BoxShadow(
+      color: Color(0x140B0F19), // 8% Navy
+      blurRadius: 32,
+      offset: Offset(0, 16),
     ),
   ];
+
+  /// Legacy Elevations (Mapped to Umbra)
+  static const List<BoxShadow> elevation1 = shadowUmbraSurface;
+  static const List<BoxShadow> elevation2 = shadowUmbraMedium;
+  static const List<BoxShadow> elevation3 = shadowUmbraHigh;
+  static const List<BoxShadow> elevation4 = shadowUmbraHigh;
 
   // ============================================================================
   // ANIMATION DURATIONS

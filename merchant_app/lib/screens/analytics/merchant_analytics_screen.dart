@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
@@ -38,31 +39,84 @@ class _MerchantAnalyticsScreenState extends ConsumerState<MerchantAnalyticsScree
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Analytics'),
-        backgroundColor: AppColors.primaryTeal,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: Colors.white,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
-          tabs: const [
-            Tab(text: 'Revenue', icon: Icon(Icons.trending_up, size: 20)),
-            Tab(text: 'Performance', icon: Icon(Icons.speed, size: 20)),
-            Tab(text: 'Customers', icon: Icon(Icons.people, size: 20)),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light.copyWith(
+        statusBarColor: Colors.transparent,
+      ),
+      child: Scaffold(
+        backgroundColor: AppColors.neutral100,
+        body: Column(
+          children: [
+            // Custom Gradient Header
+            Container(
+              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppColors.primaryTeal,
+                    AppColors.primaryTealDark,
+                  ],
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Analytics',
+                          style: AppTypography.headlineSmall.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(Icons.calendar_today_rounded, color: Colors.white, size: 20),
+                        ),
+                      ],
+                    ),
+                  ),
+                  TabBar(
+                    controller: _tabController,
+                    indicatorColor: Colors.white,
+                    indicatorWeight: 3,
+                    indicatorSize: TabBarIndicatorSize.label,
+                    labelColor: Colors.white,
+                    unselectedLabelColor: Colors.white.withOpacity(0.6),
+                    labelStyle: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.w800),
+                    unselectedLabelStyle: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.w600),
+                    tabs: const [
+                      Tab(text: 'Revenue'),
+                      Tab(text: 'Performance'),
+                      Tab(text: 'Customers'),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            // Tab Content
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  _RevenueTab(),
+                  _PerformanceTab(),
+                  _CustomersTab(),
+                ],
+              ),
+            ),
           ],
         ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          _RevenueTab(),
-          _PerformanceTab(),
-          _CustomersTab(),
-        ],
       ),
     );
   }
@@ -140,21 +194,39 @@ class _RevenueTab extends ConsumerWidget {
   }) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
-          gradient: isSelected ? AppColors.primaryGradient : null,
-          color: isSelected ? null : AppColors.neutral200,
+          gradient: isSelected ? const LinearGradient(
+            colors: [AppColors.primaryTeal, AppColors.primaryTealDark],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ) : null,
+          color: isSelected ? null : Colors.white,
           borderRadius: BorderRadius.circular(20),
+          boxShadow: isSelected ? [
+            BoxShadow(
+              color: AppColors.primaryTeal.withOpacity(0.3),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            )
+          ] : [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            )
+          ],
           border: Border.all(
-            color: isSelected ? Colors.transparent : AppColors.neutral400,
+            color: isSelected ? Colors.transparent : AppColors.neutral200,
           ),
         ),
         child: Text(
           label,
-          style: AppTypography.bodyMedium.copyWith(
+          style: AppTypography.labelLarge.copyWith(
             color: isSelected ? Colors.white : AppColors.neutral700,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+            fontWeight: isSelected ? FontWeight.w900 : FontWeight.w700,
           ),
         ),
       ),
@@ -171,52 +243,94 @@ class _RevenueTab extends ConsumerWidget {
       children: [
         // Total Revenue Card
         Container(
+          width: double.infinity,
           decoration: BoxDecoration(
-            gradient: AppColors.goldGradient,
-            borderRadius: BorderRadius.circular(16),
+            gradient: const LinearGradient(
+              colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
+                color: const Color(0xFFFFA500).withOpacity(0.3),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
               ),
             ],
           ),
-          child: Padding(
-            padding: AppSpacing.paddingAll20,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(24),
+            child: Stack(
               children: [
-                Row(
-                  children: [
-                    Icon(
-                      trend.isPositiveTrend ? Icons.trending_up : Icons.trending_down,
-                      color: Colors.white,
-                      size: 28,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Total Revenue',
-                      style: AppTypography.titleMedium.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  '₹${trend.totalRevenue.toStringAsFixed(2)}',
-                  style: AppTypography.displaySmall.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                Positioned(
+                  right: -20,
+                  top: -20,
+                  child: CircleAvatar(
+                    radius: 60,
+                    backgroundColor: Colors.white.withOpacity(0.1),
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  'Avg ₹${trend.averageDaily.toStringAsFixed(0)}/day',
-                  style: AppTypography.bodyMedium.copyWith(
-                    color: Colors.white.withOpacity(0.9),
+                Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'TOTAL REVENUE',
+                            style: AppTypography.labelSmall.copyWith(
+                              color: Colors.white.withOpacity(0.8),
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  trend.isPositiveTrend ? Icons.trending_up : Icons.trending_down,
+                                  color: Colors.white,
+                                  size: 14,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'Healthy',
+                                  style: AppTypography.labelSmall.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        '₹${trend.totalRevenue.toStringAsFixed(2)}',
+                        style: AppTypography.displayMedium.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: -1,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Avg ₹${trend.averageDaily.toStringAsFixed(0)} per day',
+                        style: AppTypography.bodyMedium.copyWith(
+                          color: Colors.white.withOpacity(0.9),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -224,26 +338,45 @@ class _RevenueTab extends ConsumerWidget {
           ),
         ),
 
-        const SizedBox(height: AppSpacing.space24),
+        const SizedBox(height: AppSpacing.space32),
 
-        // Chart Title
+        // Chart Header
         Text(
-          'Revenue Trend',
-          style: AppTypography.titleMedium.copyWith(
-            fontWeight: FontWeight.bold,
+          'REVENUE TREND',
+          style: AppTypography.labelSmall.copyWith(
+            color: AppColors.neutral500,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 1.0,
           ),
         ),
-        const SizedBox(height: AppSpacing.space12),
+        const SizedBox(height: 4),
+        Text(
+          'Financial Overview',
+          style: AppTypography.titleLarge.copyWith(
+            color: AppColors.neutral900,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        const SizedBox(height: 16),
 
         // Line Chart
-        PremiumCard(
-          style: PremiumCardStyle.elevated,
-          child: Padding(
-            padding: AppSpacing.paddingAll16,
-            child: SizedBox(
-              height: 250,
-              child: RevenueLineChart(trend: trend),
-            ),
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: AppColors.neutral200),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.03),
+                blurRadius: 15,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: SizedBox(
+            height: 250,
+            child: RevenueLineChart(trend: trend),
           ),
         ),
       ],
@@ -334,44 +467,63 @@ class _PerformanceTab extends ConsumerWidget {
       children: [
         // Growth Card
         Container(
+          width: double.infinity,
           decoration: BoxDecoration(
-            gradient: metrics.isGrowthPositive ? AppColors.primaryGradient : null,
-            color: metrics.isGrowthPositive ? null : AppColors.neutral200,
-            borderRadius: BorderRadius.circular(16),
+            gradient: metrics.isGrowthPositive 
+              ? const LinearGradient(
+                  colors: [AppColors.successGreen, Color(0xFF1B8A61)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                )
+              : const LinearGradient(
+                  colors: [AppColors.neutral300, AppColors.neutral400],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+            borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
+                color: (metrics.isGrowthPositive ? AppColors.successGreen : AppColors.neutral400).withOpacity(0.2),
+                blurRadius: 15,
+                offset: const Offset(0, 8),
               ),
             ],
           ),
           child: Padding(
-            padding: AppSpacing.paddingAll20,
+            padding: const EdgeInsets.all(24),
             child: Row(
               children: [
-                Icon(
-                  metrics.isGrowthPositive ? Icons.arrow_upward : Icons.arrow_downward,
-                  color: metrics.isGrowthPositive ? Colors.white : AppColors.neutral600,
-                  size: 32,
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Icon(
+                    metrics.isGrowthPositive ? Icons.trending_up_rounded : Icons.trending_down_rounded,
+                    color: Colors.white,
+                    size: 28,
+                  ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 20),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Week-over-Week Growth',
-                        style: AppTypography.bodyMedium.copyWith(
-                          color: metrics.isGrowthPositive ? Colors.white : AppColors.neutral700,
+                        'WEEKLY GROWTH',
+                        style: AppTypography.labelSmall.copyWith(
+                          color: Colors.white.withOpacity(0.8),
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.0,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         metrics.growthDisplay,
-                        style: AppTypography.headlineMedium.copyWith(
-                          color: metrics.isGrowthPositive ? Colors.white : AppColors.neutral700,
-                          fontWeight: FontWeight.bold,
+                        style: AppTypography.headlineSmall.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
                         ),
                       ),
                     ],
@@ -385,53 +537,65 @@ class _PerformanceTab extends ConsumerWidget {
         const SizedBox(height: AppSpacing.space16),
 
         // Peak Hour Card
-        PremiumCard(
-          style: PremiumCardStyle.elevated,
-          child: Padding(
-            padding: AppSpacing.paddingAll20,
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryTealExtraLight,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(
-                    Icons.access_time,
-                    color: AppColors.primaryTeal,
-                    size: 28,
-                  ),
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: AppColors.neutral200),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.03),
+                blurRadius: 15,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryTeal.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Peak Hour',
-                        style: AppTypography.bodyMedium.copyWith(
-                          color: AppColors.neutral600,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        metrics.peakHourDisplay,
-                        style: AppTypography.titleLarge.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        '₹${metrics.peakHourRevenue.toStringAsFixed(0)} revenue',
-                        style: AppTypography.bodySmall.copyWith(
-                          color: AppColors.neutral600,
-                        ),
-                      ),
-                    ],
-                  ),
+                child: const Icon(
+                  Icons.access_time_filled_rounded,
+                  color: AppColors.primaryTeal,
+                  size: 24,
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Peak Hour',
+                      style: AppTypography.labelSmall.copyWith(
+                        color: AppColors.neutral500,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      metrics.peakHourDisplay,
+                      style: AppTypography.titleMedium.copyWith(
+                        fontWeight: FontWeight.w900,
+                        color: AppColors.neutral900,
+                      ),
+                    ),
+                    Text(
+                      '₹${metrics.peakHourRevenue.toStringAsFixed(0)} revenue',
+                      style: AppTypography.labelSmall.copyWith(
+                        color: AppColors.primaryTeal,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
 
@@ -439,21 +603,33 @@ class _PerformanceTab extends ConsumerWidget {
 
         // Payment Method Breakdown
         if (metrics.paymentMethodBreakdown.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.space24),
           Text(
-            'Payment Methods',
-            style: AppTypography.titleMedium.copyWith(
-              fontWeight: FontWeight.bold,
+            'PAYMENT METHODS',
+            style: AppTypography.labelSmall.copyWith(
+              color: AppColors.neutral500,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.0,
             ),
           ),
-          const SizedBox(height: AppSpacing.space12),
-          PremiumCard(
-            style: PremiumCardStyle.elevated,
-            child: Padding(
-              padding: AppSpacing.paddingAll16,
-              child: SizedBox(
-                height: 200,
-                child: PaymentPieChart(metrics: metrics),
-              ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: AppColors.neutral200),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.03),
+                  blurRadius: 15,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: SizedBox(
+              height: 200,
+              child: PaymentPieChart(metrics: metrics),
             ),
           ),
         ],
@@ -597,30 +773,50 @@ class _CustomersTab extends ConsumerWidget {
   }
 
   Widget _buildStatCard(String label, String value, IconData icon, Color color) {
-    return PremiumCard(
-      style: PremiumCardStyle.elevated,
-      child: Padding(
-        padding: AppSpacing.paddingAll16,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, color: color, size: 24),
-            const SizedBox(height: 12),
-            Text(
-              value,
-              style: AppTypography.headlineSmall.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppColors.neutral200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
             ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: AppTypography.bodySmall.copyWith(
-                color: AppColors.neutral600,
-              ),
+            child: Icon(icon, color: color, size: 20),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            value,
+            style: AppTypography.titleLarge.copyWith(
+              fontWeight: FontWeight.w900,
+              color: AppColors.neutral900,
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label.toUpperCase(),
+            style: AppTypography.labelSmall.copyWith(
+              color: AppColors.neutral500,
+              fontWeight: FontWeight.w800,
+              fontSize: 10,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ],
       ),
     );
   }

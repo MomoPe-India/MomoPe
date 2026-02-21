@@ -20,6 +20,11 @@ class AppColors {
   static const Color secondaryTeal = Color(0xFF20C997);
   static const Color secondaryTealLight = Color(0xFF6EDDB7);
   static const Color secondaryTealDark = Color(0xFF17A779);
+  
+  /// Secondary Navy - Deep Fintech Aesthetic
+  static const Color secondaryNavy = Color(0xFF0B0F19);
+  static const Color secondaryNavyLight = Color(0xFF1A2332);
+  static const Color secondaryNavyDark = Color(0xFF0D1219);
 
   /// Accent Colors (Complementary)
   static const Color accentOrange = Color(0xFFFF9F40);  // Warm CTA
@@ -31,6 +36,12 @@ class AppColors {
   static const Color rewardsGoldLight = Color(0xFFFFD666);
   static const Color rewardsGoldDark = Color(0xFFCC9300);
   static const Color rewardsGoldExtraLight = Color(0xFFFFF8E1);
+
+  /// Level Colors
+  static const Color levelBronze = Color(0xFFCD7F32);
+  static const Color levelSilver = Color(0xFFC0C0C0);
+  static const Color levelGold = Color(0xFFFFD700);
+  static const Color levelPlatinum = Color(0xFFE5E4E2);
 
   // ============================================================================
   // SEMANTIC COLORS
@@ -74,7 +85,7 @@ class AppColors {
   // DARK MODE COLORS (MomoPe Dark Theme)
   // ============================================================================
 
-  static const Color darkBackground = Color(0xFF131B26); // Official dark navy
+  static const Color darkBackground = Color(0xFF0B0F19); // Official dark navy
   static const Color darkSurface = Color(0xFF1A2332);
   static const Color darkCard = Color(0xFF242F3D);
 

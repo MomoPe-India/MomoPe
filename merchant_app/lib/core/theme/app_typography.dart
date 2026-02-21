@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
-/// Typography system for MomoPe Customer App
+/// Typography system for MomoPe Merchant App
 /// Using Inter for body text and Manrope for display/headers
+/// Harmonized with Customer App for brand consistency
 class AppTypography {
   // Prevent instantiation
   AppTypography._();

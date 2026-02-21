@@ -9,14 +9,17 @@ import '../../providers/auth_provider.dart';
 import '../../providers/coin_balance_provider.dart';
 import '../../models/transaction.dart';
 import '../qr_scanner/qr_scanner_screen.dart';
+import '../profile/profile_screen.dart';
 import '../transactions/transaction_history_screen.dart';
 import '../../providers/merchant_provider.dart';
 import '../../widgets/premium_qr_scan_card.dart';
+import '../../features/referral/screens/referral_screen.dart';
 
 /// Premium home screen with modern fintech design
 /// Features: Gradient coin balance card, primary scan action, recent transactions
 class HomeScreen extends ConsumerStatefulWidget {
-  const HomeScreen({super.key});
+  final VoidCallback? onProfileTap;
+  const HomeScreen({super.key, this.onProfileTap});
 
   @override
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
@@ -105,6 +108,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   _buildQuickActionsSection(),
                   const SizedBox(height: 20),
                   
+                  // Referral Stats Card (live data)
+                  _buildReferralStatsCard(),
+                  const SizedBox(height: 24),
+                  
                   // Nearby Merchants
                   _buildNearbyMerchantsSection(),
                   const SizedBox(height: 24),
@@ -140,25 +147,74 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                        user?.userMetadata?['name'] ?? 
                        'Customer';
     final firstName = displayName.split(' ').first;
+    final firstInitial = firstName.isNotEmpty ? firstName[0].toUpperCase() : 'M';
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          greeting,
-          style: AppTypography.bodyLarge.copyWith(
-            color: AppColors.neutral600,
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                greeting.toUpperCase(),
+                style: AppTypography.labelSmall.copyWith(
+                  color: AppColors.neutral500,
+                  letterSpacing: 1.2,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Hello, $firstName!',
+                style: AppTypography.displaySmall.copyWith(
+                  color: AppColors.neutral900,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -0.5,
+                ),
+              ),
+            ],
           ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          firstName,
-          style: AppTypography.displayMedium.copyWith(
-            color: AppColors.neutral900,
-            fontWeight: FontWeight.bold,
+          GestureDetector(
+          onTap: () {
+            if (widget.onProfileTap != null) {
+              widget.onProfileTap!();
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfileScreen()),
+              );
+            }
+          },
+            child: Container(
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(
+                gradient: AppColors.primaryGradient,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 2),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primaryTeal.withOpacity(0.3),
+                    blurRadius: 15,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Center(
+                child: Text(
+                  firstInitial,
+                  style: AppTypography.titleLarge.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -166,134 +222,171 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return coinBalanceAsync.when(
       data: (balanceData) {
         final balance = balanceData?.availableCoins ?? 0;
-        
-        // Calculate weekly earnings (mock for now - would come from real data)
-        final weeklyEarnings = 50;
-        
-        return GestureDetector(
-          onTap: () {
-            // TODO: Navigate to coin balance detail screen
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Coin breakdown screen coming soon!')),
-            );
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  const Color(0xFF0D9488), // Medium teal
-                  const Color(0xFF14B8A6), // Bright teal
-                  const Color(0xFF06B6D4), // Cyan accent
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+        final weeklyEarnings = 50; 
+
+        return Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primaryTeal.withOpacity(0.2),
+                blurRadius: 25,
+                offset: const Offset(0, 12),
+                spreadRadius: -5,
               ),
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF14B8A6).withOpacity(0.3),
-                  blurRadius: 20,
-                  offset: const Offset(0, 8),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(28),
+            child: Stack(
+              children: [
+                // Mesh Gradient Background
+                Container(
+                  height: 200,
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      stops: [0.0, 0.4, 0.9],
+                      colors: [
+                        Color(0xFF0F766E), // Dark Teal
+                        AppColors.primaryTeal, 
+                        Color(0xFF2DD4BF), // Light Teal
+                      ],
+                    ),
+                  ),
                 ),
-              ],
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Coin breakdown screen coming soon!')),
-                  );
-                },
-                borderRadius: BorderRadius.circular(20),
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
+                
+                // Decorative Glass Circle
+                Positioned(
+                  right: -30,
+                  top: -30,
+                  child: Container(
+                    width: 150,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.08),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+
+                // Content
+                Padding(
+                  padding: const EdgeInsets.all(24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Top Row: Label + Icon + View History
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Icon(
-                            Icons.stars_rounded,
-                            color: AppColors.rewardsGold,
-                            size: 24,
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.15),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Icon(
+                                  Icons.wallet_rounded,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                'AVAILABLE COINS',
+                                style: AppTypography.labelSmall.copyWith(
+                                  color: Colors.white.withOpacity(0.9),
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 1.0,
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Your Coins',
-                            style: AppTypography.titleMedium.copyWith(
-                              color: Colors.white.withOpacity(0.95),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
+                          GestureDetector(
+                            onTap: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Coin breakdown coming soon!')),
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: Colors.white.withOpacity(0.2)),
+                              ),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'History',
+                                    style: AppTypography.labelSmall.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white, size: 10),
+                                ],
+                              ),
                             ),
-                          ),
-                          const Spacer(),
-                          Text(
-                            'View History',
-                            style: AppTypography.bodySmall.copyWith(
-                              color: Colors.white.withOpacity(0.7),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            color: Colors.white.withOpacity(0.7),
-                            size: 12,
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
-                      
-                      // Center: Balance + Earning Indicator
+                      const SizedBox(height: 28),
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
                         children: [
-                          // Balance Number
                           Text(
                             balance.toString(),
-                            style: AppTypography.amountDisplay.copyWith(
+                            style: AppTypography.displayMedium.copyWith(
                               color: Colors.white,
-                              fontSize: 42,
-                              fontWeight: FontWeight.bold,
-                              height: 1.0,
+                              fontSize: 48,
+                              fontWeight: FontWeight.w900,
+                              height: 1,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'COINS',
+                            style: AppTypography.labelSmall.copyWith(
+                              color: Colors.white.withOpacity(0.7),
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Text(
+                            '₹${balance.toDouble().toStringAsFixed(0)}',
+                            style: AppTypography.titleLarge.copyWith(
+                              color: Colors.white.withOpacity(0.9),
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                           const SizedBox(width: 12),
-                          
-                          // Earning Indicator Badge
                           if (weeklyEarnings > 0)
                             Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              margin: const EdgeInsets.only(bottom: 4),
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
-                                color: AppColors.rewardsGold.withOpacity(0.2),
+                                color: Colors.white.withOpacity(0.15),
                                 borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: AppColors.rewardsGold.withOpacity(0.4),
-                                  width: 1,
-                                ),
                               ),
                               child: Row(
-                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(
-                                    Icons.arrow_upward,
-                                    color: AppColors.rewardsGold,
-                                    size: 12,
-                                  ),
+                                  const Icon(Icons.trending_up_rounded, color: Colors.white, size: 14),
                                   const SizedBox(width: 4),
                                   Text(
-                                    '+$weeklyEarnings this week',
-                                    style: AppTypography.bodySmall.copyWith(
-                                      color: AppColors.rewardsGold,
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
+                                    '+$weeklyEarnings',
+                                    style: AppTypography.labelSmall.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w900,
                                     ),
                                   ),
                                 ],
@@ -301,42 +394,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ),
                         ],
                       ),
-                      const SizedBox(height: 8),
-                      
-                      // Rupee Value
-                      Text(
-                        '= ₹${balance.toString()} value',
-                        style: AppTypography.bodyMedium.copyWith(
-                          color: Colors.white.withOpacity(0.85),
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      
-                      // CTA Link
-                      Row(
-                        children: [
-                          Text(
-                            'See breakdown',
-                            style: AppTypography.bodyMedium.copyWith(
-                              color: Colors.white,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          Icon(
-                            Icons.arrow_forward,
-                            color: Colors.white,
-                            size: 16,
-                          ),
-                        ],
-                      ),
                     ],
                   ),
                 ),
-              ),
+              ],
             ),
           ),
         );
@@ -404,20 +465,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Widget _buildRecentActivitySection() {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(top: 8, bottom: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text(
-            'Recent Activity',
-            style: AppTypography.titleLarge.copyWith(
-              color: AppColors.neutral900,
-              fontWeight: FontWeight.bold,
-            ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'YOUR TRANSACTIONS',
+                style: AppTypography.labelSmall.copyWith(
+                  color: AppColors.neutral500,
+                  letterSpacing: 1.0,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Recent Activity',
+                style: AppTypography.titleLarge.copyWith(
+                  color: AppColors.neutral900,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ],
           ),
           if (_recentTransactions.isNotEmpty)
-            TextButton(
-              onPressed: () {
+            GestureDetector(
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -425,16 +501,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 );
               },
-              style: TextButton.styleFrom(
-                padding: EdgeInsets.zero,
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
               child: Text(
                 'View All',
                 style: AppTypography.labelLarge.copyWith(
                   color: AppColors.primaryTeal,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
             ),
@@ -563,6 +634,115 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
+  Widget _buildReferralStatsCard() {
+    final statsAsync = ref.watch(referralStatsProvider);
+
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const ReferralScreen()),
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: AppColors.neutral200),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 15,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            // Icon with Gradient Glow
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF6366F1).withOpacity(0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: const Icon(Icons.card_giftcard_rounded, color: Colors.white, size: 24),
+            ),
+            const SizedBox(width: 16),
+            // Stats
+            Expanded(
+              child: statsAsync.when(
+                loading: () => Text(
+                  'Invite Friends, Earn Rewards',
+                  style: AppTypography.titleMedium.copyWith(
+                    color: AppColors.neutral900,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                error: (_, __) => Text(
+                  'Invite Friends & Family',
+                  style: AppTypography.titleMedium.copyWith(
+                    color: AppColors.neutral900,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                data: (stats) {
+                  final invited = stats['friends_invited'] ?? 0;
+                  final coins   = stats['coins_earned_from_referrals'] ?? 0;
+                  if (invited == 0) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Invite & Earn',
+                          style: AppTypography.titleMedium.copyWith(
+                            color: AppColors.neutral900,
+                            fontWeight: FontWeight.w900,
+                          )),
+                        const SizedBox(height: 2),
+                        Text('Get 50 Coins for every referral',
+                          style: AppTypography.labelSmall.copyWith(
+                            color: AppColors.neutral500,
+                            fontWeight: FontWeight.w700,
+                          )),
+                      ],
+                    );
+                  }
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('$invited Success Invitations',
+                        style: AppTypography.titleMedium.copyWith(
+                          color: AppColors.neutral900,
+                          fontWeight: FontWeight.w900,
+                        )),
+                      const SizedBox(height: 2),
+                      Text('You earned $coins coins total',
+                        style: AppTypography.labelSmall.copyWith(
+                          color: AppColors.primaryTeal,
+                          fontWeight: FontWeight.w900,
+                        )),
+                    ],
+                  );
+                },
+              ),
+            ),
+            const Icon(Icons.arrow_forward_ios_rounded, color: AppColors.neutral300, size: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildQuickActionsSection() {
     return Padding(
       padding: const EdgeInsets.only(top: 18, bottom: 16),
@@ -600,8 +780,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             icon: Icons.person_add_rounded,
             label: 'Invite',
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Referral coming soon!')),
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ReferralScreen()),
               );
             },
           ),
@@ -619,24 +800,32 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Expanded(
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(16),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 12),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                icon,
-                color: AppColors.primaryTeal,
-                size: 24,
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryTeal.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Icon(
+                  icon,
+                  color: AppColors.primaryTeal,
+                  size: 24,
+                ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
               Text(
                 label,
-                style: AppTypography.bodySmall.copyWith(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.neutral800, // Darker for readability
+                style: AppTypography.labelSmall.copyWith(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.neutral800,
+                  letterSpacing: 0.1,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 1,
@@ -784,16 +973,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(
-              'Nearby Rewards',
-              style: AppTypography.titleLarge.copyWith(
-                color: AppColors.neutral900,
-                fontWeight: FontWeight.bold,
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'NEARBY REWARDS',
+                  style: AppTypography.labelSmall.copyWith(
+                    color: AppColors.neutral500,
+                    letterSpacing: 1.0,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Explore Merchants',
+                  style: AppTypography.titleLarge.copyWith(
+                    color: AppColors.neutral900,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ],
             ),
-            TextButton(
-              onPressed: () {
+            GestureDetector(
+              onTap: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Tap Explore tab for all merchants!')),
                 );
@@ -802,12 +1006,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 'See All',
                 style: AppTypography.labelLarge.copyWith(
                   color: AppColors.primaryTeal,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
         
         // TODO: Replace with real Supabase data
         _buildMerchantsList(),

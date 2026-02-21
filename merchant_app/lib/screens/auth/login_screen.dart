@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_typography.dart';
+import '../../core/widgets/widgets.dart';
 import '../../providers/auth_provider.dart';
+import 'package:flutter/services.dart';
 
 class LoginScreen extends ConsumerWidget {
   const LoginScreen({super.key});
@@ -10,102 +13,140 @@ class LoginScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authService = ref.watch(authServiceProvider);
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light,
+      child: Scaffold(
+        backgroundColor: AppColors.secondaryNavy,
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppColors.secondaryNavy,
+                AppColors.secondaryNavyDark,
+              ],
+            ),
+          ),
+          child: Stack(
             children: [
-              // Logo/Icon
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF6366F1).withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.store,
-                  color: Color(0xFF6366F1),
-                  size: 50,
+              // Decorative shapes
+              Positioned(
+                top: -100,
+                right: -100,
+                child: CircleAvatar(
+                  radius: 200,
+                  backgroundColor: AppColors.primaryTeal.withOpacity(0.05),
                 ),
               ),
-              const SizedBox(height: 32),
-
-              // Title
-              Text(
-                'MomoPe Merchant',
-                style: GoogleFonts.inter(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF111827),
+              Positioned(
+                bottom: -50,
+                left: -50,
+                child: CircleAvatar(
+                  radius: 150,
+                  backgroundColor: AppColors.rewardsGold.withOpacity(0.03),
                 ),
               ),
-              const SizedBox(height: 8),
+              
+              SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Logo/Icon with Glow
+                      Container(
+                        width: 120,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryTeal.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primaryTeal.withOpacity(0.2),
+                              blurRadius: 30,
+                              spreadRadius: 5,
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.store_rounded,
+                          color: AppColors.primaryTeal,
+                          size: 60,
+                        ),
+                      ),
+                      const SizedBox(height: 48),
 
-              // Subtitle
-              Text(
-                'Grow your business with rewards',
-                style: GoogleFonts.inter(
-                  fontSize: 16,
-                  color: const Color(0xFF6B7280),
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 64),
+                      // Title
+                      Text(
+                        'MomoPe',
+                        style: AppTypography.displayMedium.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: -1.5,
+                        ),
+                      ),
+                      Text(
+                        'MERCHANT',
+                        style: AppTypography.labelLarge.copyWith(
+                          color: AppColors.primaryTeal,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 4.0,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
 
-              // Google Sign-In Button
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton.icon(
-                  onPressed: () async {
-                    try {
-                      await authService.signInWithGoogle();
-                    } catch (e) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Sign in failed: $e')),
-                        );
-                      }
-                    }
-                  },
-                  icon: Image.asset(
-                    'assets/google_logo.png',
-                    height: 24,
-                    width: 24,
-                    errorBuilder: (context, error, stackTrace) =>
-                        const Icon(Icons.login, color: Colors.white),
+                      // Subtitle
+                      Text(
+                        'Join India\'s most rewarding payment\nnetwork for businesses.',
+                        style: AppTypography.bodyMedium.copyWith(
+                          color: Colors.white.withOpacity(0.7),
+                          height: 1.5,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 80),
+
+                      // Google Sign-In Button (Custom Premium)
+                      PremiumButton(
+                        text: 'Sign in with Google',
+                        onPressed: () async {
+                          try {
+                            await authService.signInWithGoogle();
+                          } catch (e) {
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Sign in failed: $e'),
+                                  behavior: SnackBarBehavior.floating,
+                                  backgroundColor: AppColors.errorRed,
+                                ),
+                              );
+                            }
+                          }
+                        },
+                        style: PremiumButtonStyle.primary,
+                      ),
+                      
+                      const SizedBox(height: 32),
+
+                      // Terms
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Text(
+                          'By continuing, you agree to MomoPe\'s Terms of Service and Privacy Policy.',
+                          style: AppTypography.labelSmall.copyWith(
+                            color: Colors.white.withOpacity(0.4),
+                            height: 1.6,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
                   ),
-                  label: Text(
-                    'Sign in with Google',
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF6366F1),
-                    foregroundColor: Colors.white,
-                    elevation: 2,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
                 ),
-              ),
-              const SizedBox(height: 24),
-
-              // Terms
-              Text(
-                'By continuing, you agree to MomoPe\'s Terms of Service',
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  color: const Color(0xFF9CA3AF),
-                ),
-                textAlign: TextAlign.center,
               ),
             ],
           ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import '../../utils/qr_parser.dart';
 import 'payment_preview_screen.dart';
 
 class QRScannerScreen extends ConsumerStatefulWidget {
@@ -34,60 +35,42 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
     final String? qrCode = barcodes.first.rawValue;
     if (qrCode == null || qrCode.isEmpty) return;
 
-    setState(() {
-      _isProcessing = true;
-    });
+    setState(() => _isProcessing = true);
 
-    // Stop camera
+    // Stop camera while processing
     await cameraController.stop();
 
-    // Parse merchant ID from QR code
-    // Expected format: "momope://merchant/{merchant_id}"
-    final merchantId = _parseMerchantId(qrCode);
+    // ✅ FIX C6: Use MerchantQRParser for JSON format + typed errors
+    final result = await MerchantQRParser.parseMerchantQR(qrCode);
 
-    if (merchantId != null) {
-      // Navigate to payment preview screen
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PaymentPreviewScreen(merchantId: merchantId),
-          ),
-        );
-      }
-    } else {
-      // Invalid QR code
+    if (!result.isSuccess) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Invalid MomoPe QR code. Please scan a merchant QR code.',
+              result.errorMessage,
               style: GoogleFonts.inter(),
             ),
             backgroundColor: const Color(0xFFEF4444),
+            duration: const Duration(seconds: 4),
           ),
         );
-        setState(() {
-          _isProcessing = false;
-        });
+        setState(() => _isProcessing = false);
         await cameraController.start();
       }
-    }
-  }
-
-  String? _parseMerchantId(String qrCode) {
-    // Parse QR code format: "momope://merchant/{merchant_id}"
-    final uri = Uri.tryParse(qrCode);
-    if (uri == null) return null;
-
-    if (uri.scheme == 'momope' && uri.host == 'merchant') {
-      final pathSegments = uri.pathSegments;
-      if (pathSegments.isNotEmpty) {
-        return pathSegments[0];
-      }
+      return;
     }
 
-    return null;
+    // Navigate to payment preview with the verified merchant ID
+    final merchantId = result.merchant!['id'] as String;
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PaymentPreviewScreen(merchantId: merchantId),
+        ),
+      );
+    }
   }
 
   @override

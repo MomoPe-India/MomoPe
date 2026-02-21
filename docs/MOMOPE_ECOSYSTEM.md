@@ -6,8 +6,8 @@
 
 ---
 
-**Version**: 1.0  
-**Last Updated**: February 17, 2026  
+**Version**: 2.0  
+**Last Updated**: February 20, 2026  
 **Status**: Living Document (Continuously Updated)  
 **Classification**: Internal - Founder Reference Guide
 
@@ -705,16 +705,16 @@ User can NEVER drain entire balance.
 
 ## 12. Technology Stack
 
-### Production Environment (Deployed February 15, 2026)
+### Production Environment (Updated February 20, 2026)
 
 **Project References**:
 - **Supabase**: Project `wpnngcuoqtvgwhizkrwt` (Mumbai region)
-- **Firebase**: Project `momope-production`
+- **Firebase**: Project `momope-production` (kept for Google OAuth configuration only)
 - **PayU**: Merchant ID `U1Zax8` (Test Mode)
 
 ---
 
-### Mobile Apps (Flutter) - ✅ **PRODUCTION READY** (Updated February 17, 2026)
+### Mobile Apps (Flutter) - ✅ **RUNNING ON DEVICE** (Updated February 20, 2026)
 
 | Component | Technology | Version | Status |
 |-----------|-----------|---------|--------|
@@ -727,12 +727,13 @@ User can NEVER drain entire balance.
 | **Charts** | fl_chart | **0.66.2** | ✅ **DEPLOYED** |
 | **Internationalization** | intl | **0.18.1** | ✅ **DEPLOYED** |
 | **UI Fonts** | google_fonts | **6.3.3** | ✅ **DEPLOYED** |
+| **Sharing** | share_plus | Latest | ✅ **DEPLOYED** (Referral) |
 
-**Android Build Configuration** (Cutting-Edge):
+**Android Build Configuration** (Stable):
 ```
 Gradle: 8.12 (latest stable)
 Android Gradle Plugin (AGP): 8.10.0  
-Kotlin: 2.2.0
+Kotlin: 2.1.0
 Java/JDK: 21.0.10 LTS (Temurin)
 Min SDK: 21 (Android 5.0)
 Target SDK: 36 (Android 16 API 36)
@@ -742,27 +743,32 @@ Compile SDK: 36
 **Package Structure**:
 ```
 customer_app/
-├── com.momope.customer (Android)
+├── com.momope.customer_app (Android)
 ├── google-services.json ✅ Configured
+├── Authentication ✅ Google Sign-In Live
+├── Home Screen ✅ Live (Coin Balance + Referral Stats Card)
 ├── Transaction History ✅ Live
 ├── QR Scanner ✅ Live
 ├── Coin Balance ✅ Live
-└── Payment Flow ✅ Live
+├── Payment Flow ✅ Live
+└── Referral System ✅ Live (End-to-End)
 
 merchant_app/
 ├── com.momope.merchant (Android)
 ├── google-services.json ✅ Configured
+├── Authentication ✅ Google Sign-In Live
 ├── Dashboard with Analytics ✅ Live
-├── QR Code Display ✅ Live
+├── Static QR Code Display ✅ Live
 └── Transaction Management ✅ Live
 ```
 
-**Build Status** (February 17, 2026):
-- ✅ Customer App: **Running on device** - Full payment flow operational
+**Build Status** (February 20, 2026):
+- ✅ Customer App: **Running on device** - Full payment + referral flow operational
 - ✅ Merchant App: **Running on device** - Dashboard and QR display functional
-- ✅ Google OAuth: Fully integrated for both apps
+- ✅ Google OAuth: Fully integrated for both apps (Supabase Native, no Firebase Auth)
 - ✅ Supabase RLS: Complete security model deployed
 - ✅ Build Environment: Stable, production-ready configuration
+- ✅ Referral System: End-to-end implemented and deployed
 
 ---
 
@@ -771,20 +777,23 @@ merchant_app/
 | Component | Technology | Version | Status |
 |-----------|-----------|---------|--------|
 | **Database** | Supabase PostgreSQL | 15.x | ✅ **DEPLOYED** |
-| **Schema Migrations** | SQL Files | 4 migrations | ✅ **DEPLOYED** |
-| **Authentication** | Supabase Native Auth | Latest | ✅ **MIGRATED** |
-| **OAuth Providers** | Google Sign-In (Web + Android) | Latest | ✅ **ENABLED** |
+| **Schema Migrations** | SQL Files | **10 migrations** | ✅ **DEPLOYED** |
+| **Authentication** | Supabase Native Auth | Latest | ✅ **LIVE** |
+| **OAuth Providers** | Google Sign-In (Web + Android) | Latest | ✅ **ENABLED (Cross-Platform)** |
 | **Session Management** | Supabase Auth + RLS | Latest | ✅ **DEPLOYED** |
-| **Edge Functions** | Deno 1.x (TypeScript) | 1 function | ✅ **DEPLOYED** |
+| **Edge Functions** | Deno 1.x (TypeScript) | **3 functions** | ✅ **DEPLOYED** |
 | **Payments** | PayU Gateway | Test Mode | 🚧 **IN PROGRESS** |
 | **Cron Jobs** | pg_cron Extension | v1.6.4 | ✅ **ENABLED** |
 | **Hosting** | Supabase Cloud (Mumbai) | Managed | ✅ **LIVE** |
+| **Referral System** | PostgreSQL + Edge Function | v1.0 | ✅ **DEPLOYED** |
 
 **Recent Updates (February 2026)**:
 - ✅ Migrated from Firebase Phone Auth → Supabase Native Auth (Google Sign-In)
-- ✅ Removed Firebase dependencies entirely
+- ✅ Removed Firebase Auth dependencies entirely (Firebase kept for `google-services.json` config only)
 - 🚧 Payment integration UI complete, PayU SDK API integration in progress
 - ✅ Commission rate policy updated (15%-50%)
+- ✅ **Referral System fully implemented** — `referral_code` on users, `referrals` table, `referral_stats` view, `process_referral_reward()` atomic function, `process-referral` edge function
+- ✅ **Supabase MCP Server** integrated for AI-assisted development
 
 **Production URLs**:
 ```
@@ -825,15 +834,15 @@ supabase secrets set PAYU_SALT=BaYKhBYXBAmIJ9w9XUb3KZ8gQsj9SHWt
 
 ---
 
-### Web Platform (Future - Q2 2026)
+### Web Platform (Deployed February 19, 2026)
 
 | Component | Technology | Purpose |
 |-----------|-----------|---------|
-| **Frontend** | Next.js 14 (React) | Admin dashboard, public website |
-| **UI Library** | Shadcn UI + Tailwind CSS | Component library |
-| **Charts** | Recharts | Analytics visualization |
-| **Hosting** | Vercel | Edge deployment |
-| **Domains** | admin.momope.com, www.momope.com | Production URLs |
+| **Framework** | Next.js 15 (App Router) | Public website & future admin dashboard |
+| **Styling** | Tailwind CSS + Framer Motion | "Financial OS" design system |
+| **Hosting** | Vercel | Global edge network & CI/CD |
+| **Domain** | momope.com | Custom domain (SSL via Vercel) |
+| **Analytics** | Vercel Analytics | Real-time traffic insights |
 
 ---
 
@@ -904,22 +913,24 @@ MomoPe/
 **Supabase Project**: `wpnngcuoqtvgwhizkrwt`  
 **Database**: PostgreSQL 15.x  
 **Deployment Status**: ✅ **LIVE** (February 15, 2026)  
-**Migrations**: 3 SQL files applied
+**Migrations**: 10 SQL files applied (including referral system — `010_referral_system.sql`)
 
 ---
 
-### Schema Overview (7 Core Tables)
+### Schema Overview (9 Core Tables + 1 View)
 
-| Table | Purpose | Rows (Initial) | Status |
-|-------|---------|----------------|--------|
-| **users** | Customer/Merchant/Admin profiles | 0 | ✅ Deployed |
-| **user_mappings** | Firebase ↔ Supabase auth bridge | 0 | ✅ Deployed |
-| **momo_coin_balances** | User coin balances (aggregate) | 0 | ✅ Deployed |
-| **merchants** | Business info, commission rates | 0 | ✅ Deployed |
-| **transactions** | Payment records (PayU integration) | 0 | ✅ Deployed |
-| **commissions** | Revenue ledger, settlement tracking | 0 | ✅ Deployed |
-| **coin_batches** | FIFO expiry tracking (90 days) | 0 | ✅ Deployed |
-| **coin_transactions** | Complete audit trail | 0 | ✅ Deployed |
+| Table | Purpose | Status |
+|-------|---------|--------|
+| **users** | Customer/Merchant/Admin profiles + `referral_code` + `referred_by` | ✅ Deployed |
+| **user_mappings** | Legacy Firebase ↔ Supabase bridge (deprecated) | ✅ Deployed |
+| **momo_coin_balances** | User coin balances (aggregate) | ✅ Deployed |
+| **merchants** | Business info, commission rates | ✅ Deployed |
+| **transactions** | Payment records (PayU integration) | ✅ Deployed |
+| **commissions** | Revenue ledger, settlement tracking | ✅ Deployed |
+| **coin_batches** | FIFO expiry tracking (90 days) | ✅ Deployed |
+| **coin_transactions** | Complete audit trail | ✅ Deployed |
+| **referrals** | Referrer→Referee relationships, status, reward tracking | ✅ Deployed |
+| **referral_stats** (view) | Aggregated referral metrics per user for home screen | ✅ Deployed |
 
 ---
 
@@ -1370,7 +1381,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 ### Production Deployment (Supabase Functions)
 
 **Runtime**: Deno 1.x (TypeScript)  
-**Deployment Status**: ✅ **1 Function LIVE** (February 2026)  
+**Deployment Status**: ✅ **3 Functions LIVE** (February 2026)  
 **Base URL**: `https://wpnngcuoqtvgwhizkrwt.supabase.co/functions/v1`
 
 ---
@@ -1379,16 +1390,18 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 | Function | Purpose | Trigger | Status |
 |----------|---------|---------|--------|
-| **payu-webhook** | Process payment callbacks from PayU | PayU POST webhook | ✅ **ACTIVE** |
+| **payu-webhook** | Process payment callbacks from PayU; fires referral check on qualifying payments (≥₹100) | PayU POST webhook | ✅ **ACTIVE** |
+| **process-referral** | Awards 50 coins each to referrer+referee after first qualifying fiat payment (≥₹100); idempotent | Called by `payu-webhook` (fire-and-forget) | ✅ **ACTIVE** |
+| **process-expiry** | Expires 90-day old coin batches, updates balances, records expiry transactions | pg_cron (daily 2 AM IST) | ✅ **ACTIVE** |
 
 **Removed Functions** (February 2026):
-- ~~sync-user~~ (No longer needed after Firebase removal)
-- ~~process-expiry~~ (Migrated to pg_cron scheduled job)
+- ~~sync-user~~ (No longer needed after Firebase removal; Google OAuth handled natively by Supabase)
 
-**Deployment Command**:
+**Deployment Commands**:
 ```powershell
-supabase functions deploy sync-user --no-verify-jwt
+# From c:\DRAGON\MomoPe\supabase directory:
 supabase functions deploy payu-webhook --no-verify-jwt
+supabase functions deploy process-referral   # verify-jwt default (uses service role internally)
 supabase functions deploy process-expiry --no-verify-jwt
 ```
 
@@ -1404,110 +1417,54 @@ PAYU_SALT                  ✅ Set
 
 ---
 
-### 1. sync-user (Authentication Bridge)
+### ~~1. sync-user~~ (REMOVED — February 2026)
 
-**Purpose**: Link Firebase UID to Supabase user_id after phone OTP verification
+**Reason for Removal**: Authentication migrated from Firebase Phone OTP → Supabase Native Auth (Google Sign-In). The `sync-user` function created Supabase users from Firebase tokens, which is no longer needed. Google Sign-In now creates Supabase auth users natively, and `public.users` profiles are created via database trigger on `auth.users` insert.
 
-**Endpoint**: `POST https://wpnngcuoqtvgwhizkrwt.supabase.co/functions/v1/sync-user`
+**Migration**: The `user_mappings` table is preserved for historical reference but no longer written to.
 
-**When Called**: Immediately after user verifies Firebase OTP
+---
+
+### 1. process-referral (Referral Reward Processing)
+
+**Purpose**: Award 50 coins each to referrer and referee after the referee's first qualifying fiat payment (≥₹100). Idempotent — safe to call multiple times.
+
+**Endpoint**: `POST https://wpnngcuoqtvgwhizkrwt.supabase.co/functions/v1/process-referral`
+
+**When Called**: Called internally by `payu-webhook` (fire-and-forget) after every successful payment ≥₹100
 
 **Request Body**:
 ```json
 {
-  "firebase_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6...",
-  "phone_number": "+919876543210"
+  "customer_id": "uuid-of-paying-customer"
 }
 ```
 
 **Response** (200 OK):
 ```json
 {
-  "supabase_user_id": "uuid-...",
-  "is_new_user": true
+  "success": true,
+  "message": "Referral reward processed",
+  "coins_awarded": 50
 }
 ```
 
----
+**Logic**:
+1. Look up `referrals` table for this user as referee (`referee_id = customer_id`, status = `pending`)
+2. If no referral record found → skip (not a referred user) → `{ success: true, message: "No referral found" }`
+3. Check: has this user made a previous qualifying payment? If yes → skip (already processed)
+4. Call DB function `process_referral_reward(referral_id)` which atomically:
+   - Adds 50 coins to referrer's balance (`momo_coin_balances` + `coin_transactions`)
+   - Adds 50 coins to referee's balance
+   - Updates `referrals.status = 'completed'`
+   - Uses `FOR UPDATE` row lock to prevent double-reward races
+5. Return success
 
-#### Implementation Logic
+**Idempotency**: If called multiple times for same `customer_id`, the `UNIQUE(referee_id)` + status check ensures coins are only awarded once.
 
-```typescript
-// supabase/functions/sync-user/index.ts
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import * as admin from 'https://esm.sh/firebase-admin@11'
+**Security**: JWT verification enabled (called with service-role internally, not exposed to clients).
 
-serve(async (req) => {
-  const { firebase_token, phone_number } = await req.json()
-  
-  // 1. Verify Firebase token
-  const decodedToken = await admin.auth().verifyIdToken(firebase_token)
-  const firebase_uid = decodedToken.uid
-  
-  // 2. Create Supabase admin client (SERVICE_ROLE bypasses RLS)
-  const supabase = createClient(
-    Deno.env.get('SUPABASE_URL')!,
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-  )
-  
-  // 3. Check if user mapping exists
-  const { data: mapping } = await supabase
-    .from('user_mappings')
-    .select('supabase_user_id')
-    .eq('firebase_uid', firebase_uid)
-    .single()
-  
-  if (mapping) {
-    // Existing user
-    return new Response(JSON.stringify({
-      supabase_user_id: mapping.supabase_user_id,
-      is_new_user: false
-    }), { headers: { "Content-Type": "application/json" } })
-  }
-  
-  // 4. NEW USER: Create Supabase anonymous auth user
-  const { data: authUser } = await supabase.auth.admin.createUser({
-    email: `${firebase_uid}@momope.internal`, // Dummy email
-    email_confirm: true
-  })
-  
-  // 5. Create user_mappings entry
-  await supabase.from('user_mappings').insert({
-    firebase_uid,
-    supabase_user_id: authUser.user.id
-  })
-  
-  // 6. Create public.users profile
-  await supabase.from('users').insert({
-    id: authUser.user.id,
-    firebase_uid,
-    phone_number,
-    role: 'customer'
-  })
-  
-  // 7. Initialize coin balance (0 coins)
-  await supabase.from('momo_coin_balances').insert({
-    user_id: authUser.user.id,
-    total_coins: 0,
-    available_coins: 0,
-    locked_coins: 0
-  })
-  
-  return new Response(JSON.stringify({
-    supabase_user_id: authUser.user.id,
-    is_new_user: true
-  }), { headers: { "Content-Type": "application/json" } })
-})
-```
-
-**Security**: Uses `SERVICE_ROLE_KEY` to bypass RLS (required for creating users)
-
-**Error Handling**:
-- Invalid Firebase token → 401 Unauthorized
-- Database error → 500 Internal Server Error
-
----
+**File**: `supabase/functions/process-referral/index.ts`
 
 ### 2. payu-webhook (Payment Processing)
 
@@ -1767,8 +1724,9 @@ supabase functions logs sync-user
 
 ### Production Environment Setup (Current State)
 
-**Deployment Date**: February 15, 2026  
-**Status**: ✅ **Backend Fully Deployed** | ⏳ Mobile Apps (Not Started)
+**Backend Deployment**: February 15, 2026  
+**Mobile Apps**: February 20, 2026  
+**Status**: ✅ **Fully Deployed — Backend, Web Platform & Mobile Apps**
 
 ---
 
@@ -1777,24 +1735,31 @@ supabase functions logs sync-user
 ```
 MomoPe Production Stack
 ├── Backend (Supabase Cloud - Mumbai)
-│   ├── Database: PostgreSQL 15.x ✅
-│   ├── Edge Functions: 3 deployed ✅
-│   ├── Authentication: RLS enabled ✅
+│   ├── Database: PostgreSQL 15.x ✅ (10 migrations applied)
+│   ├── Edge Functions: 3 deployed ✅ (payu-webhook, process-referral, process-expiry)
+│   ├── Authentication: Google Sign-In via Supabase Native Auth ✅
+│   ├── Referral System: End-to-end (DB + Edge Function) ✅
 │   └── Storage: Not configured yet
 │
-├── Authentication (Firebase)
-│   ├── Phone Auth: Enabled ✅
-│   ├── Customer App: Registered ✅
-│   └── Merchant App: Registered ✅
+├── Authentication (Supabase Native — NOT Firebase Auth)
+│   ├── Google Sign-In: Enabled ✅
+│   ├── Customer App: OAuth Configured ✅
+│   └── Merchant App: OAuth Configured ✅
+│   (Firebase project kept ONLY for google-services.json SHA-1 config)
 │
 ├── Payments (PayU)
 │   ├── Mode: Test ✅
 │   ├── Merchant Key: U1Zax8 ✅
 │   └── Webhook: Configured ✅
 │
+├── Web Platform (Vercel)
+│   ├── URL: https://momope.com ✅
+│   ├── Framework: Next.js 15 ✅
+│   └── Repo: GitHub Connected ✅
+│
 └── Mobile Apps (Flutter)
-    ├── Customer App: Not started ⏳
-    └── Merchant App: Not started ⏳
+    ├── Customer App: ✅ RUNNING ON DEVICE (Full referral system live)
+    └── Merchant App: ✅ RUNNING ON DEVICE (Dashboard + QR live)
 ```
 
 ---
@@ -1836,16 +1801,18 @@ PAYU_CLIENT_SECRET=883027729623a6b8ec3e4a3a70dc710d297a59f0f96fda3f55e00f33800d0
 
 ---
 
-### Firebase Configuration Files
+### Google Services Configuration Files
 
 **Customer App**: `customer_app/android/app/google-services.json` ✅  
 **Merchant App**: `merchant_app/android/app/google-services.json` ✅
 
 **Package Names**:
-- Customer: `com.momope.customer`
+- Customer: `com.momope.customer_app`
 - Merchant: `com.momope.merchant`
 
-**Configuration**: Both apps registered in Firebase console with Phone Authentication enabled
+**Configuration**: Both apps registered in Firebase console for Google OAuth SHA-1 fingerprint configuration only.  
+**Authentication Provider**: Supabase Native Auth (Google Sign-In) — NOT Firebase Phone Auth.  
+Firebase project is kept alive solely to provide the `google-services.json` that Android requires for Google Sign-In.
 
 ---
 
@@ -1858,12 +1825,13 @@ PAYU_CLIENT_SECRET=883027729623a6b8ec3e4a3a70dc710d297a59f0f96fda3f55e00f33800d0
 ☑ supabase link --project-ref wpnngcuoqtvgwhizkrwt
 
 # 2. Deploy database migrations
-☑ supabase db push  # 3 migrations applied
+☑ supabase db push  # 10 migrations applied
 
 # 3. Deploy edge functions
-☑ supabase functions deploy sync-user --no-verify-jwt
 ☑ supabase functions deploy payu-webhook --no-verify-jwt
+☑ supabase functions deploy process-referral   # (verify-jwt enabled by default)
 ☑ supabase functions deploy process-expiry --no-verify-jwt
+# Note: sync-user was removed (Firebase Auth removed; Google OAuth native to Supabase)
 
 # 4. Set environment secrets
 ☑ supabase secrets set PAYU_MERCHANT_KEY=U1Zax8
@@ -1882,33 +1850,35 @@ PAYU_CLIENT_SECRET=883027729623a6b8ec3e4a3a70dc710d297a59f0f96fda3f55e00f33800d0
 
 ---
 
-#### Mobile App Deployment (⏳ PENDING)
+#### Mobile App Deployment (✅ COMPLETED — Running on Device)
 
-**Customer App**:
+**Customer App** (`c:\DRAGON\MomoPe\customer_app`):
 ```powershell
-# 1. Setup Firebase
-☐ Download google-services.json
-☐ Place in customer_app/android/app/
+# All steps complete — app running on physical Android device
+☑ google-services.json configured (customer_app/android/app/)
+☑ flutter pub get
+☑ Supabase + Google Sign-In initialized
+☑ Referral system end-to-end tested
+☑ flutter run (physical device)
 
-# 2. Install dependencies
-☐ cd customer_app
-☐ flutter pub get
-
-# 3. Configure Supabase client
-☐ Add supabase_flutter package
-☐ Initialize with SUPABASE_URL and SUPABASE_ANON_KEY
-
-# 4. Build and test
-☐ flutter run (Android emulator)
-☐ Test Firebase OTP flow
-☐ Test Supabase connection
-
-# 5. Production build
+# Next: Production build
 ☐ flutter build apk --release
 ☐ Upload to Google Play Internal Testing
 ```
 
-**Merchant App**: Same steps as customer app
+**Merchant App** (`c:\DRAGON\MomoPe\merchant_app`):
+```powershell
+# All steps complete — app running on physical Android device
+☑ google-services.json configured (merchant_app/android/app/)
+☑ flutter pub get
+☑ Supabase + Google Sign-In initialized
+☑ Dashboard + QR code display tested
+☑ flutter run (physical device)
+
+# Next: Production build
+☐ flutter build apk --release
+☐ Upload to Google Play Internal Testing
+```
 
 ---
 
@@ -2647,39 +2617,53 @@ Surplus: ₹7L ✅ (System survives)
 
 ## 23. Customer App
 
-### Core Features
+### Core Features (✅ Live as of February 20, 2026)
 
-**Home Screen**:
-- Coin balance (large, prominent)
-- Nearby merchants (map view + list)
-- Transaction history preview
-- Earn potential calculator
+**Home Screen** (`home_screen.dart`):
+- Premium coin balance card (large, prominent — teal gradient)
+- Live **Referral Stats Card** — shows "X friends invited · Y coins earned" from Supabase `referral_stats` view in real-time (replaces static banner)
+- Transaction history preview (real data from Supabase)
+- Quick actions row (Pay, Scan, Rewards, Invite)
+- QR scan card
 
 **Scan & Pay**:
-- QR scanner
+- QR scanner (camera integration via `mobile_scanner`)
 - Manual amount entry
-- Coin application slider
+- Coin application slider (draft — PayU redirect pending final integration)
 - Payment breakdown preview
 - PayU integration (redirect)
-- Success animation (confetti, coin credit)
 
 **Transaction History**:
 - Filterable (date, merchant, amount)
 - Coin earned/redeemed tags
-- Receipt download (PDF)
+- Real-time Supabase data
 
 **Profile**:
-- Phone number (verified)
-- Name, email (optional)
+- Google account name & email
 - Notification settings
 - Logout
 
+**Referral System** (`lib/features/referral/`) — ✅ **FULLY IMPLEMENTED**:
+- **ReferralScreen** — Premium redesign:
+  - `SliverAppBar` gradient hero section
+  - Live stats tiles (friends invited, coins earned) from `referral_stats` Supabase view
+  - 4-step visual explainer with dotted step connectors
+  - Large animated referral code card with copy-to-clipboard feedback
+  - "Share & Invite Friends" button with rich pre-formatted message via `share_plus`
+- **Reward Logic** (per the referral rules):
+  - Referrer gets **50 coins** after referee's first qualifying fiat payment (≥₹100)
+  - Referee gets **50 coins** at same time
+  - Processed atomically by `process_referral_reward()` DB function
+  - Triggered by `payu-webhook` → `process-referral` (fire-and-forget, non-blocking)
+  - Duplicate prevention: `UNIQUE(referee_id)` + status check before awarding
+
 ### Upcoming Features (Q2 2026)
 
+- Onboarding referral code entry field (new users enter referral code at signup)
+- Push notifications (coin expiry alerts, referral rewards)
 - Merchant favorites
 - Transaction search
-- Referral program
-- Push notifications (coin expiry alerts)
+- Receipt download (PDF)
 
 ---
 
@@ -2759,22 +2743,52 @@ Surplus: ₹7L ✅ (System survives)
 
 ---
 
-## 26. Public Website
+## 26. Public Website (Deployed)
 
-### Structure: www.momope.com
+### Overview: www.momope.com
 
-**Pages**:
-1. **Homepage**: Hero, value proposition, download links
-2. **For Customers**: How it works, rewards calculator
-3. **For Merchants**: Commission structure, onboarding form
-4. **About Us**: Vision, team (future)
-5. **FAQs**: Common questions (categorized)
-6. **Contact**: Support email, merchant queries
-7. **Legal**: Terms of Service, Privacy Policy
+**Live Date**: February 19, 2026
+**Framework**: Next.js 15 (App Router)
+**Hosting**: Vercel
 
-**Design**: Clean, modern, mobile-first
+**Design Philosophy**: "The Financial OS for Local Commerce"
+- **Glassmorphism**: Premium, translucent UI elements
+- **Animations**: Framer Motion for scroll-reveals and interactions
+- **Typography**: Manrope (Headings) + Inter (Body)
+- **Palette**: Deep Navy (#0B0F19) + Teal (#00C4A7) + Orange (#FF9F40)
 
-**Tech**: Next.js (SSR, SEO optimized)
+### Key Page Components
+
+#### 1. Homepage (The "Financial OS" Experience)
+- **Hero Section**: 
+  - **Headline**: "Scan. Pay. & Earn."
+  - **Visual**: 3D Animated Phone Composition (CSS-only construction) showing live transactions and charts.
+  - **Floating Elements**: Trust badges (PayU, Secure) and ecosystem coins.
+  
+- **Ecosystem Explainer**:
+  - **Interactive Pillars**: "For You", "For Business", "For Community".
+  - **Orbiting Nodes**: Visualizes how money flows within the local economy.
+  
+- **Social Proof**:
+  - **Live Marquee**: Real merchant names from Kadapa (Fresh Mart, Chai Point, etc.).
+  - **Testimonials**: Using aesthetic Unsplash imagery for relatable user stories.
+
+#### 2. Merchant Page (/merchant)
+- **Value Prop**: "Zero Customer Acquisition Cost"
+- **Calculator**: Interactive commission vs. revenue slider.
+- **Onboarding**: Integrated lead capture form.
+
+#### 3. Download Strategy
+- **Smart Detection**: `MobileDownloadPrompt` detects device OS.
+- **Deep Linking**:
+  - iOS/Android -> WhatsApp Business (MVP flow)
+  - Desktop -> QR Code to scan
+- **Sticky CTA**: "Get App" button follows user scroll.
+
+#### 4. Legal & Trust
+- **Footer**: Full transparency (CIN, Registered Office, Contact).
+- **Compliance**: Terms of Service, Privacy Policy, and Refund Policy pages live.
+
 
 ---
 
@@ -3180,7 +3194,10 @@ MomoPe Settlement Model:
 **Organic**:
 - App Store Optimization (ASO)
 - Merchant word-of-mouth
-- User referrals (future)
+- **Referral Program** (Live):
+    - **Mechanic**: Reffer gets 50 coins, Referee gets 50 coins.
+    - **Trigger**: Referee makes first payment >₹100 to any merchant.
+    - **Tracking**: Unique referral code (User ID hash) applied at signup.
 
 **Paid**:
 - Google Ads (local search: "cashback app Bangalore")
@@ -3288,9 +3305,9 @@ LTV:CAC Ratio = ₹1,620 / ₹75 = 21.6x ✅ (Excellent)
 
 | Color | Hex Code | Usage |
 |-------|----------|-------|
-| **Primary Teal** | `#2CB78A` | Brand identity, primary actions, headers |
-| **Teal Light** | `#2DBCAF` | Gradients, hover states, accents |
-| **Teal Dark** | `#24A077` | Active states, dark variants |
+| **Primary Teal** | `#00C4A7` | Brand identity, primary actions, headers |
+| **Teal Light** | `#33D4BB` | Gradients, hover states, accents |
+| **Teal Dark** | `#009F85` | Active states, dark variants |
 | **Accent Orange** | `#FF9F40` | Call-to-action, warm highlights |
 | **Rewards Gold** | `#FFB800` | Coin rewards, achievements, gamification |
 | **Success Green** | `#00C853` | Transaction success, positive feedback |
@@ -3335,16 +3352,15 @@ LTV:CAC Ratio = ₹1,620 / ₹75 = 21.6x ✅ (Excellent)
 ### Q1 2026 (Current)
 - [x] Customer App MVP (Android)
 - [x] Merchant App MVP (Android)
+- [x] **Public Web Platform** (momope.com)
 - [ ] PayU integration (in progress)
 - [ ] Transaction flow complete
-- [ ] Coin expiry cron job deployed
 
 ### Q2 2026
-- [ ] Web platform (www.momope.com)
 - [ ] Super Admin Dashboard
 - [ ] Merchant Portal (advanced analytics)
 - [ ] Push notifications
-- [ ] Referral program
+- [ ] Referral program (Web Implemented)
 
 ### Q3 2026
 - [ ] iOS apps (Customer + Merchant)
@@ -3477,10 +3493,12 @@ LTV:CAC Ratio = ₹1,620 / ₹75 = 21.6x ✅ (Excellent)
 **Technical Lead**: (Your name/email)  
 **CFO/Finance**: (Your name/email)
 
-**Code Repositories**:
-- Customer App: `c:\MomoPe\momope`
-- Merchant App: `c:\MomoPe\momope_merchant`
-- Supabase Functions: `c:\MomoPe\supabase\functions`
+**Code Repositories** (Monorepo at `c:\DRAGON\MomoPe\`):
+- Customer App: `c:\DRAGON\MomoPe\customer_app`
+- Merchant App: `c:\DRAGON\MomoPe\merchant_app`
+- Super Admin Dashboard: `c:\DRAGON\MomoPe\admin` (Next.js 15.5.12, port 3001)
+- Supabase Edge Functions: `c:\DRAGON\MomoPe\supabase\functions`
+- Marketing Website: `c:\DRAGON\MomoPe\website` (Live: momope.com)
 
 **Documentation**:
 - Product Model: `c:\MomoPe\momope\PRODUCT_MODEL.md`
@@ -3499,6 +3517,38 @@ LTV:CAC Ratio = ₹1,620 / ₹75 = 21.6x ✅ (Excellent)
 | Date | Version | Changes | Author |
 |------|---------|---------|--------|
 | Feb 15, 2026 | 1.0 | Initial consolidated document | Acting CTO |
+| Feb 20, 2026 | 2.0 | Phase 1 completions: PayU SDK real integration, Referral onboarding screen, Merchant app navigation fix, Super Admin Dashboard (Next.js, 5 modules, running on port 3001). Next.js 15.5.12 with admin-role JWT middleware. | Acting CTO |
+
+---
+
+---
+
+## Phase 2 Roadmap (As of Feb 20, 2026)
+
+All Phase 1 implementations are complete. The following are prioritized for Phase 2:
+
+### Sprint 5 — Supabase JWT Hook Activation *(Manual, ~15 min)*
+The `custom_access_token_hook` DB function is deployed but needs to be enabled in Supabase Dashboard → Authentication → Hooks. Once active, the admin middleware will use the JWT claim directly instead of querying the DB on every request.
+
+### Sprint 6 — Admin Dashboard Enhancements
+- **Analytics charts**: 7-day transaction volume (bar) and coin circulation trend (line) on the Overview page using `recharts`
+- **Settlements management page**: List and approve pending merchant settlement requests
+- **CSV Export**: Download transaction data from the Transactions page
+- **Coin minting/burning**: Admin controls to manually credit or deduct coins from any user account (fraud remediation, promotions)
+
+### Sprint 7 — Push Notifications (FCM)
+- Firebase Cloud Messaging integration in both Flutter apps (`firebase_messaging` package)
+- Customer app: Payment success/failure push notifications
+- Merchant app: "New payment received" and "Settlement processed" notifications
+- New `send-notification` Supabase Edge Function called from `payu-webhook` on payment completion
+
+### Sprint 8 — Customer App Profile Edit
+- Allow customers to update their display name in the Profile screen
+- Optional: Profile photo upload to Supabase Storage
+
+### Sprint 9 — Merchant Analytics Screen
+- New dedicated analytics screen in the merchant app with 7/30/90-day period selector
+- Bar chart for daily earnings, peak-hours heatmap using `fl_chart`
 
 ---
 

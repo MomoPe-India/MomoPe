@@ -72,35 +72,27 @@ class _QRScannerScreenState extends State<QRScannerScreen>
   }
 
   Future<void> _handleQRCode(String qrCode) async {
-    try {
-      // Parse QR code and fetch merchant from Supabase
-      final merchantData = await MerchantQRParser.parseMerchantQR(qrCode);
-      
-      if (merchantData == null) {
-        // Invalid QR code or merchant not found
-        _showError('Invalid QR Code', 'This is not a valid MomoPe merchant QR code.');
-        setState(() => _isScanning = true); // Resume scanning
-        return;
-      }
-      
-      // Convert to Merchant model
-      final merchant = Merchant.fromJson(merchantData);
-      
-      // Navigate to payment confirmation
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PaymentConfirmationScreen(
-              merchant: merchant,
-            ),
-          ),
-        );
-      }
-    } catch (e) {
-      // Handle errors (network, database, etc.)
-      _showError('Error', 'Failed to load merchant details. Please try again.');
+    // ✅ FIX C6: Use typed QrParseResult for specific, user-friendly error messages
+    final result = await MerchantQRParser.parseMerchantQR(qrCode);
+
+    if (!result.isSuccess) {
+      _showError('Scan Failed', result.errorMessage);
       setState(() => _isScanning = true); // Resume scanning
+      return;
+    }
+
+    // Convert to Merchant model and navigate to payment confirmation
+    final merchant = Merchant.fromJson(result.merchant!);
+
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PaymentConfirmationScreen(
+            merchant: merchant,
+          ),
+        ),
+      );
     }
   }
   
@@ -139,26 +131,33 @@ class _QRScannerScreenState extends State<QRScannerScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          // Camera Preview
-          if (_scannerController != null)
-            MobileScanner(
-              controller: _scannerController!,
-              onDetect: _onDetect,
-            ),
-
-          // Overlay with scan area
-          _buildOverlay(),
-
-          // Top bar with close button
-          _buildTopBar(),
-
-          // Bottom instructions
-          _buildBottomInstructions(),
-        ],
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light.copyWith(
+        statusBarColor: Colors.transparent,
+        systemNavigationBarColor: Colors.black,
+        systemNavigationBarIconBrightness: Brightness.light,
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: Stack(
+          children: [
+            // Camera Preview
+            if (_scannerController != null)
+              MobileScanner(
+                controller: _scannerController!,
+                onDetect: _onDetect,
+              ),
+  
+            // Overlay with scan area
+            _buildOverlay(),
+  
+            // Top bar with close button
+            _buildTopBar(),
+  
+            // Bottom instructions
+            _buildBottomInstructions(),
+          ],
+        ),
       ),
     );
   }

@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_spacing.dart';
 import '../core/theme/app_typography.dart';
 import '../core/widgets/widgets.dart';
+import '../features/auth/screens/login_screen.dart';
 import '../providers/merchant_provider.dart';
 import '../providers/merchant_stats_provider.dart';
 import '../providers/merchant_transactions_provider.dart';
 import '../providers/merchant_settlements_provider.dart';
 import '../models/transaction.dart';
+import '../services/notification_service.dart';
+import 'profile/merchant_profile_screen.dart';
+import 'transactions/merchant_transaction_history_screen.dart';
 
 /// Enhanced Merchant Dashboard Screen
 /// Shows today's earnings, stats, settlement preview, recent transactions
@@ -22,71 +28,76 @@ class MerchantDashboardScreen extends ConsumerWidget {
     final pendingSettlementAsync = ref.watch(pendingSettlementProvider);
     final todayTransactionsAsync = ref.watch(todayTransactionsProvider);
 
-    return Scaffold(
-      body: merchantAsync.when(
-        data: (merchant) {
-          if (merchant == null) {
-            return const Center(
-              child: Text('No merchant profile found'),
-            );
-          }
-
-         return RefreshIndicator(
-            onRefresh: () async {
-              ref.invalidate(todayStatsProvider);
-              ref.invalidate(pendingSettlementProvider);
-              ref.invalidate(todayTransactionsProvider);
-            },
-            child: CustomScrollView(
-              slivers: [
-                // Premium Header with Gradient
-                _buildHeader(context, merchant.businessName),
-
-                // Content
-                SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Column(
-                    children: [
-                    Padding(
-                      padding: AppSpacing.paddingAll16,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Today's Earnings Summary
-                          _buildEarningsSummary(context, todayStatsAsync),
-                          
-                          const SizedBox(height: AppSpacing.space24),
-
-                          // Stats Cards Row
-                          _buildStatsCards(context, todayStatsAsync),
-
-                          const SizedBox(height: AppSpacing.space24),
-
-                          // Pending Settlement Preview
-                          _buildSettlementPreview(context, pendingSettlementAsync),
-
-                          const SizedBox(height: AppSpacing.space24),
-
-                          // Recent Transactions
-                          _buildRecentTransactions(context, todayTransactionsAsync),
-                        ],
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light.copyWith(
+        statusBarColor: Colors.transparent,
+      ),
+      child: Scaffold(
+        body: merchantAsync.when(
+          data: (merchant) {
+            if (merchant == null) {
+              return const Center(
+                child: Text('No merchant profile found'),
+              );
+            }
+  
+           return RefreshIndicator(
+              onRefresh: () async {
+                ref.invalidate(todayStatsProvider);
+                ref.invalidate(pendingSettlementProvider);
+                ref.invalidate(todayTransactionsProvider);
+              },
+              child: CustomScrollView(
+                slivers: [
+                  // Premium Header with Gradient
+                  _buildHeader(context, merchant.businessName),
+  
+                  // Content
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Column(
+                      children: [
+                      Padding(
+                        padding: AppSpacing.paddingAll16,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Today's Earnings Summary
+                            _buildEarningsSummary(context, todayStatsAsync),
+                            
+                            const SizedBox(height: AppSpacing.space24),
+  
+                            // Stats Cards Row
+                            _buildStatsCards(context, todayStatsAsync),
+  
+                            const SizedBox(height: AppSpacing.space24),
+  
+                            // Pending Settlement Preview
+                            _buildSettlementPreview(context, pendingSettlementAsync),
+  
+                            const SizedBox(height: AppSpacing.space24),
+  
+                            // Recent Transactions
+                            _buildRecentTransactions(context, todayTransactionsAsync),
+                          ],
+                        ),
                       ),
-                    ),
-                  ]),
-                ),
+                    ]),
+                  ),
+                ],
+              ),
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stack) => Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                const SizedBox(height: 16),
+                Text('Error: $error'),
               ],
             ),
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 48, color: Colors.red),
-              const SizedBox(height: 16),
-              Text('Error: $error'),
-            ],
           ),
         ),
       ),
@@ -95,62 +106,125 @@ class MerchantDashboardScreen extends ConsumerWidget {
 
   Widget _buildHeader(BuildContext context, String businessName) {
     return SliverAppBar(
-      expandedHeight: 120,
+      expandedHeight: 140,
       pinned: true,
-      flexibleSpace: FlexibleSpaceBar(
-        background: Container(
-          decoration: const BoxDecoration(
-            gradient: AppColors.primaryGradient,
+      elevation: 0,
+      backgroundColor: AppColors.primaryTeal,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
+      actions: [
+        IconButton(
+          icon: Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Colors.white24, Colors.white10],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white24, width: 1.5),
+            ),
+            child: const Icon(Icons.notifications_none_rounded, color: Colors.white, size: 20),
           ),
-          child: SafeArea(
-            child: Padding(
-              padding: AppSpacing.paddingAll16,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(
-                          Icons.dashboard_rounded,
-                          color: Colors.white,
-                          size: 24,
-                        ),
-                      ),
-                      const SizedBox(width: AppSpacing.space12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Dashboard',
-                              style: AppTypography.bodySmall.copyWith(
-                                color: Colors.white.withOpacity(0.9),
-                              ),
-                            ),
-                            Text(
-                              businessName,
-                              style: AppTypography.titleLarge.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+          onPressed: () {
+            // Notifications logic
+          },
+        ),
+        const SizedBox(width: 8),
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MerchantProfileScreen()),
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [AppColors.rewardsGold, Color(0xFFFFA500)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 1.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.15),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
+              child: Center(
+                child: Text(
+                  businessName.isNotEmpty ? businessName[0].toUpperCase() : 'M',
+                  style: AppTypography.labelLarge.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
             ),
+          ),
+        ),
+      ],
+      flexibleSpace: FlexibleSpaceBar(
+        background: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppColors.primaryTeal,
+                AppColors.primaryTealDark,
+              ],
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'BUSINESS DASHBOARD',
+                            style: AppTypography.labelSmall.copyWith(
+                              color: Colors.white.withOpacity(0.7),
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            businessName,
+                            style: AppTypography.headlineSmall.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: -0.5,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -163,60 +237,103 @@ class MerchantDashboardScreen extends ConsumerWidget {
   ) {
     return todayStatsAsync.when(
       data: (stats) {
-        return PremiumCard(
-          style: PremiumCardStyle.elevated,
-          child: Container(
-            padding: AppSpacing.paddingAll20,
-            decoration: const BoxDecoration(
-              gradient: AppColors.goldGradient,
+        return Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFFFFA500).withOpacity(0.4),
+                blurRadius: 25,
+                offset: const Offset(0, 12),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(28),
+            child: Stack(
               children: [
-                Text(
-                  'Today\'s Earnings',
-                  style: AppTypography.bodyMedium.copyWith(
-                    color: Colors.white.withOpacity(0.9),
+                Positioned(
+                  right: -30,
+                  top: -30,
+                  child: CircleAvatar(
+                    radius: 80,
+                    backgroundColor: Colors.white.withOpacity(0.1),
                   ),
                 ),
-                const SizedBox(height: AppSpacing.space8),
-                Text(
-                  '₹${stats.netRevenue.toStringAsFixed(0)}',
-                  style: AppTypography.displaySmall.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                Padding(
+                  padding: const EdgeInsets.all(28),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'TODAY\'S EARNINGS',
+                            style: AppTypography.labelSmall.copyWith(
+                              color: Colors.white.withOpacity(0.8),
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              '+12% vs yest.',
+                              style: AppTypography.labelSmall.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 9,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        '₹${stats.netRevenue.toStringAsFixed(2)}',
+                        style: AppTypography.displayMedium.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: -1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Row(
+                        children: [
+                          _buildMetric(
+                            '${stats.transactionCount}',
+                            'TOTAL ORDERS',
+                            Colors.white,
+                          ),
+                          const SizedBox(width: 40),
+                          _buildMetric(
+                            '${stats.customersServed}',
+                            'UNIQUE CUSTOMERS',
+                            Colors.white,
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(height: AppSpacing.space12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildMetric(
-                        '${stats.transactionCount}',
-                        'Orders',
-                        Colors.white,
-                      ),
-                    ),
-                    Expanded(
-                      child: _buildMetric(
-                        '${stats.customersServed}',
-                        'Customers',
-                        Colors.white,
-                      ),
-                    ),
-                  ],
                 ),
               ],
             ),
           ),
         );
       },
-      loading: () => const PremiumCard(
-        child: Center(child: CircularProgressIndicator()),
-      ),
-      error: (_, __) => const PremiumCard(
-        child: Center(child: Text('Failed to load stats')),
-      ),
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (_, __) => const Center(child: Text('Failed to load stats')),
     );
   }
 
@@ -271,29 +388,50 @@ class MerchantDashboardScreen extends ConsumerWidget {
     IconData icon,
     Color color,
   ) {
-    return PremiumCard(
-      style: PremiumCardStyle.outlined,
-      child: Padding(
-        padding: AppSpacing.paddingAll12,
-        child: Column(
-          children: [
-            Icon(icon, color: color, size: 20),
-            const SizedBox(height: AppSpacing.space8),
-            Text(
-              value,
-              style: AppTypography.titleMedium.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppColors.neutral200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
             ),
-            const SizedBox(height: AppSpacing.space4),
-            Text(
-              label,
-              style: AppTypography.bodySmall.copyWith(
-                color: AppColors.neutral600,
-              ),
+            child: Icon(icon, color: color, size: 18),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            value,
+            style: AppTypography.titleMedium.copyWith(
+              fontWeight: FontWeight.w900,
+              color: AppColors.neutral900,
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label.toUpperCase(),
+            style: AppTypography.labelSmall.copyWith(
+              color: AppColors.neutral500,
+              fontWeight: FontWeight.w800,
+              fontSize: 9,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -306,60 +444,71 @@ class MerchantDashboardScreen extends ConsumerWidget {
       data: (pendingAmount) {
         if (pendingAmount == 0) return const SizedBox.shrink();
 
-        return PremiumCard(
-          style: PremiumCardStyle.elevated,
-          child: Padding(
-            padding: AppSpacing.paddingAll16,
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryTeal.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(
-                    Icons.monetization_on_rounded,
-                    color: AppColors.primaryTeal,
-                    size: 24,
-                  ),
+        return Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: AppColors.neutral200),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.03),
+                blurRadius: 15,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryTeal.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                const SizedBox(width: AppSpacing.space16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Pending Settlement',
-                        style: AppTypography.bodyMedium.copyWith(
-                          color: AppColors.neutral600,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.space4),
-                      Text(
-                        '₹${pendingAmount.toStringAsFixed(0)}',
-                        style: AppTypography.titleLarge.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primaryTeal,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.space4),
-                      Text(
-                        'Next payout in 3 days',
-                        style: AppTypography.bodySmall.copyWith(
-                          color: AppColors.neutral500,
-                        ),
-                      ),
-                    ],
-                  ),
+                child: const Icon(
+                  Icons.account_balance_rounded,
+                  color: AppColors.primaryTeal,
+                  size: 24,
                 ),
-                const Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  color: AppColors.neutral400,
-                  size: 16,
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'PENDING SETTLEMENT',
+                      style: AppTypography.labelSmall.copyWith(
+                        color: AppColors.neutral500,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '₹${pendingAmount.toStringAsFixed(2)}',
+                      style: AppTypography.titleLarge.copyWith(
+                        fontWeight: FontWeight.w900,
+                        color: AppColors.neutral900,
+                      ),
+                    ),
+                    Text(
+                      'Next payout in 3 days',
+                      style: AppTypography.labelSmall.copyWith(
+                        color: AppColors.primaryTeal,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              const Icon(
+                Icons.arrow_forward_ios_rounded,
+                color: AppColors.neutral400,
+                size: 14,
+              ),
+            ],
           ),
         );
       },
@@ -379,17 +528,30 @@ class MerchantDashboardScreen extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Today\'s Transactions',
-              style: AppTypography.titleMedium.copyWith(
-                fontWeight: FontWeight.bold,
+              'RECENT ORDERS',
+              style: AppTypography.labelSmall.copyWith(
+                color: AppColors.neutral500,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.2,
               ),
             ),
             TextButton(
               onPressed: () {
-                // Navigate to full transaction history
-                // TODO: Implement navigation
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        const MerchantTransactionHistoryScreen(),
+                  ),
+                );
               },
-              child: const Text('View All'),
+              child: Text(
+                'View All',
+                style: AppTypography.labelSmall.copyWith(
+                  color: AppColors.primaryTeal,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
             ),
           ],
         ),
@@ -420,68 +582,81 @@ class MerchantDashboardScreen extends ConsumerWidget {
   }
 
   Widget _buildTransactionCard(BuildContext context, Transaction txn) {
-    return PremiumCard(
-      style: PremiumCardStyle.outlined,
-      child: Padding(
-        padding: AppSpacing.paddingAll12,
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: txn.isSuccess
-                    ? AppColors.successGreen.withOpacity(0.1)
-                    : AppColors.errorRed.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(
-                txn.isSuccess ? Icons.check_circle_rounded : Icons.cancel_rounded,
-                color: txn.isSuccess ? AppColors.successGreen : AppColors.errorRed,
-                size: 20,
-              ),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.neutral200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: txn.isSuccess
+                  ? AppColors.successGreen.withOpacity(0.1)
+                  : AppColors.errorRed.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
             ),
-            const SizedBox(width: AppSpacing.space12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '₹${txn.grossAmount.toStringAsFixed(0)}',
-                    style: AppTypography.bodyLarge.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.space4),
-                  Text(
-                    txn.getFormattedDate(),
-                    style: AppTypography.bodySmall.copyWith(
-                      color: AppColors.neutral600,
-                    ),
-                  ),
-                ],
-              ),
+            child: Icon(
+              txn.isSuccess ? Icons.check_circle_rounded : Icons.cancel_rounded,
+              color: txn.isSuccess ? AppColors.successGreen : AppColors.errorRed,
+              size: 18,
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (txn.netRevenue != null)
-                  Text(
-                    '₹${txn.netRevenue!.toStringAsFixed(0)}',
-                    style: AppTypography.bodyMedium.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primaryTeal,
-                    ),
+                Text(
+                  '₹${txn.grossAmount.toStringAsFixed(0)}',
+                  style: AppTypography.titleMedium.copyWith(
+                    fontWeight: FontWeight.w900,
+                    color: AppColors.neutral900,
                   ),
-                const SizedBox(height: AppSpacing.space4),Text(
-                  '${txn.rewardsEarned} coins',
-                  style: AppTypography.bodySmall.copyWith(
+                ),
+                Text(
+                  txn.getFormattedDate(),
+                  style: AppTypography.labelSmall.copyWith(
                     color: AppColors.neutral500,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              if (txn.netRevenue != null)
+                Text(
+                  '₹${txn.netRevenue!.toStringAsFixed(2)}',
+                  style: AppTypography.labelLarge.copyWith(
+                    fontWeight: FontWeight.w900,
+                    color: AppColors.primaryTeal,
+                  ),
+                ),
+              Text(
+                '${txn.rewardsEarned} coins',
+                style: AppTypography.labelSmall.copyWith(
+                  color: AppColors.rewardsGold,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 10,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -520,15 +695,19 @@ class MerchantDashboardScreen extends ConsumerWidget {
       children: [
         Text(
           value,
-          style: AppTypography.headlineSmall.copyWith(
+          style: AppTypography.titleLarge.copyWith(
             color: color,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w900,
           ),
         ),
+        const SizedBox(height: 2),
         Text(
-          label,
-          style: AppTypography.bodySmall.copyWith(
-            color: color.withOpacity(0.8),
+          label.toUpperCase(),
+          style: AppTypography.labelSmall.copyWith(
+            color: color.withOpacity(0.7),
+            fontWeight: FontWeight.w800,
+            fontSize: 9,
+            letterSpacing: 0.5,
           ),
         ),
       ],

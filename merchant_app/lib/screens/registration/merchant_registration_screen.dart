@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
@@ -146,73 +146,89 @@ class _MerchantRegistrationScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.neutral100,
-      body: SafeArea(
-        child: Column(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light,
+      child: Scaffold(
+        backgroundColor: AppColors.neutral100,
+        body: Column(
           children: [
             // Premium Header with Gradient
             Container(
+              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, bottom: 24),
               decoration: const BoxDecoration(
-                gradient: AppColors.primaryGradient,
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppColors.primaryTeal,
+                    AppColors.primaryTealDark,
+                  ],
+                ),
               ),
               child: Column(
                 children: [
                   // App Bar
                   Padding(
-                    padding: AppSpacing.paddingAll16,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: Row(
                       children: [
                         if (_currentStep > 0)
                           IconButton(
-                            icon: const Icon(Icons.arrow_back, color: Colors.white),
+                            icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white, size: 20),
                             onPressed: _previousStep,
-                          ),
-                        const SizedBox(width: AppSpacing.space8),
+                          )
+                        else
+                          const SizedBox(width: 48),
                         Expanded(
                           child: Text(
-                            _currentStep == 0 ? 'Business Details' : 'Banking Details',
-                            style: AppTypography.headlineMedium.copyWith(
+                            _currentStep == 0 ? 'BUSINESS DETAILS' : 'BANKING DETAILS',
+                            style: AppTypography.labelLarge.copyWith(
                               color: Colors.white,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 1.5,
                             ),
+                            textAlign: TextAlign.center,
                           ),
                         ),
+                        const SizedBox(width: 48),
                       ],
                     ),
                   ),
                   
+                  const SizedBox(height: 20),
+
                   // Progress Indicator
                   Padding(
-                    padding: AppSpacing.paddingH16,
+                    padding: const EdgeInsets.symmetric(horizontal: 40),
                     child: Column(
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: LinearProgressIndicator(
-                                value: (_currentStep + 1) / 2,
-                                backgroundColor: Colors.white.withOpacity(0.3),
-                                valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
-                                minHeight: 4,
-                              ),
-                            ),
-                          ],
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: LinearProgressIndicator(
+                            value: (_currentStep + 1) / 2,
+                            backgroundColor: Colors.white.withOpacity(0.15),
+                            valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                            minHeight: 6,
+                          ),
                         ),
-                        const SizedBox(height: AppSpacing.space8),
+                        const SizedBox(height: 12),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              'Step ${_currentStep + 1} of 2',
-                              style: AppTypography.bodySmall.copyWith(
-                                color: Colors.white.withOpacity(0.9),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                            ),
-                            Text(
-                              '${((_currentStep + 1) / 2 * 100).toInt()}% Complete',
-                              style: AppTypography.bodySmall.copyWith(
-                                color: Colors.white.withOpacity(0.9),
+                              child: Text(
+                                'STEP ${_currentStep + 1} OF 2',
+                                style: AppTypography.labelSmall.copyWith(
+                                  color: Colors.white.withOpacity(0.9),
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 10,
+                                  letterSpacing: 1,
+                                ),
                               ),
                             ),
                           ],
@@ -220,7 +236,6 @@ class _MerchantRegistrationScreenState
                       ],
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.space24),
                 ],
               ),
             ),

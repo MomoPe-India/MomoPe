@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -41,7 +42,7 @@ class QrService {
     required String merchantName,
   }) async {
     try {
-      final qrData = 'momope://merchant/$merchantId';
+      final qrData = jsonEncode({'type': 'momope_merchant', 'merchant_id': merchantId, 'version': '1'});
       final image = await generateQrImage(qrData);
       if (image == null) return null;
 
@@ -75,7 +76,7 @@ class QrService {
     required String merchantName,
   }) async {
     try {
-      final qrData = 'momope://merchant/$merchantId';
+      final qrData = jsonEncode({'type': 'momope_merchant', 'merchant_id': merchantId, 'version': '1'});
       final image = await generateQrImage(qrData);
       if (image == null) return false;
 
@@ -122,7 +123,7 @@ class QrService {
         }
       }
 
-      final qrData = 'momope://merchant/$merchantId';
+      final qrData = jsonEncode({'type': 'momope_merchant', 'merchant_id': merchantId, 'version': '1'});
       final image = await generateQrImage(qrData);
       if (image == null) return false;
 

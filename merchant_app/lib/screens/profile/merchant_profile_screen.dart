@@ -6,6 +6,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/widgets.dart';
+import '../../services/notification_service.dart';
 import '../../providers/merchant_provider.dart';
 import '../../models/merchant.dart';
 
@@ -79,97 +80,153 @@ class MerchantProfileScreen extends ConsumerWidget {
 
   Widget _buildHeader(BuildContext context, Merchant merchant) {
     return SliverAppBar(
-      expandedHeight: 150,
+      expandedHeight: 240,
       pinned: true,
+      stretch: true,
+      backgroundColor: AppColors.secondaryNavy,
+      elevation: 0,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white, size: 20),
+        onPressed: () => Navigator.pop(context),
+      ),
+      systemOverlayStyle: SystemUiOverlayStyle.light,
       flexibleSpace: FlexibleSpaceBar(
-        background: Container(
-          decoration: const BoxDecoration(
-            gradient: AppColors.primaryGradient,
-          ),
-          child: SafeArea(
-            child: Padding(
-              padding: AppSpacing.paddingAll16,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
+        stretchModes: const [StretchMode.zoomBackground],
+        background: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Background Gradient
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppColors.secondaryNavy,
+                    AppColors.secondaryNavyDark,
+                  ],
+                ),
+              ),
+            ),
+            
+            // Decorative shapes
+            Positioned(
+              top: -60,
+              right: -60,
+              child: CircleAvatar(
+                radius: 120,
+                backgroundColor: AppColors.primaryTeal.withOpacity(0.08),
+              ),
+            ),
+
+            // Profile info content
+            SafeArea(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 30),
+                    // Glassmorphism Card
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 24),
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.08),
+                        borderRadius: BorderRadius.circular(28),
+                        border: Border.all(
                           color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(16),
+                          width: 1.5,
                         ),
-                        child: Icon(
-                          _getCategoryIcon(merchant.category),
-                          color: Colors.white,
-                          size: 32,
-                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: AppSpacing.space16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              merchant.businessName,
-                              style: AppTypography.headlineMedium.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: AppSpacing.space4),
-                            Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    _getCategoryLabel(merchant.category),
-                                    style: AppTypography.bodySmall.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: AppSpacing.space8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    gradient: AppColors.goldGradient,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    '${merchant.commissionRate.toStringAsFixed(0)}% Commission',
-                                    style: AppTypography.bodySmall.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.primaryTeal.withOpacity(0.3),
+                                  blurRadius: 15,
+                                  offset: const Offset(0, 5),
                                 ),
                               ],
                             ),
-                          ],
-                        ),
+                            child: Icon(
+                              _getCategoryIcon(merchant.category),
+                              color: AppColors.primaryTeal,
+                              size: 32,
+                            ),
+                          ),
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  merchant.businessName,
+                                  style: AppTypography.headlineSmall.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: -0.5,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    _buildBadge(
+                                      _getCategoryLabel(merchant.category),
+                                      Colors.white.withOpacity(0.15),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    _buildBadge(
+                                      '${merchant.commissionRate.toStringAsFixed(0)}% RATE',
+                                      AppColors.primaryTeal.withOpacity(0.3),
+                                      textColor: AppColors.primaryTealLight,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBadge(String label, Color bgColor, {Color textColor = Colors.white}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        label.toUpperCase(),
+        style: AppTypography.labelSmall.copyWith(
+          color: textColor,
+          fontSize: 9,
+          fontWeight: FontWeight.w900,
+          letterSpacing: 0.5,
         ),
       ),
     );
@@ -184,9 +241,11 @@ class MerchantProfileScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Business Details',
-              style: AppTypography.titleMedium.copyWith(
-                fontWeight: FontWeight.bold,
+              'BUSINESS DETAILS',
+              style: AppTypography.labelSmall.copyWith(
+                color: AppColors.neutral500,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.2,
               ),
             ),
             const SizedBox(height: AppSpacing.space16),
@@ -259,9 +318,11 @@ class MerchantProfileScreen extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Banking Details',
-                  style: AppTypography.titleMedium.copyWith(
-                    fontWeight: FontWeight.bold,
+                  'BANKING DETAILS',
+                  style: AppTypography.labelSmall.copyWith(
+                    color: AppColors.neutral500,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.2,
                   ),
                 ),
                 TextButton(
@@ -306,9 +367,11 @@ class MerchantProfileScreen extends ConsumerWidget {
           Padding(
             padding: AppSpacing.paddingAll16,
             child: Text(
-              'Settings',
-              style: AppTypography.titleMedium.copyWith(
-                fontWeight: FontWeight.bold,
+              'SETTINGS',
+              style: AppTypography.labelSmall.copyWith(
+                color: AppColors.neutral500,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.2,
               ),
             ),
           ),
@@ -399,6 +462,13 @@ class MerchantProfileScreen extends ConsumerWidget {
           ),
           TextButton(
             onPressed: () async {
+              // Clear FCM token before signing out
+              try {
+                await NotificationService().clearFcmToken();
+              } catch (e) {
+                debugPrint('Error clearing FCM token: $e');
+              }
+
               await Supabase.instance.client.auth.signOut();
               if (context.mounted) {
                 // Navigate to root and let auth state handle showing login screen

@@ -13,80 +13,98 @@ class PremiumQRScanCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
-          height: 80,
-          decoration: BoxDecoration(
-            color: const Color(0xFF131B26), // Dark Navy
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
+    Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.15),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Row(
-            children: [
-              // QR Icon Container
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Center(
-                  child: Icon(
-                    Icons.qr_code_scanner_rounded,
-                    color: Colors.white,
-                    size: 28,
+        ],
+      ),
+      child: Material(
+        color: AppColors.secondaryNavy,
+        borderRadius: BorderRadius.circular(24),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(24),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.05),
+                width: 1,
+              ),
+            ),
+            child: Row(
+              children: [
+                // QR Icon Container with Glow
+                Container(
+                  width: 52,
+                  height: 52,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.1),
+                    ),
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.qr_code_scanner_rounded,
+                      color: AppColors.primaryTeal,
+                      size: 28,
+                    ),
                   ),
                 ),
-              ),
-              
-              const SizedBox(width: 16),
-              
-              // Title and Subtitle
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Scan QR to Pay',
-                      style: AppTypography.titleMedium.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                
+                const SizedBox(width: 16),
+                
+                // Title and Subtitle
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Scan to Pay',
+                        style: AppTypography.titleLarge.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 18,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Instant payments, earn rewards',
-                      style: AppTypography.bodySmall.copyWith(
-                        color: Colors.white.withOpacity(0.7),
-                        fontSize: 13,
+                      const SizedBox(height: 4),
+                      Text(
+                        'Fast & Secure Rewards',
+                        style: AppTypography.labelSmall.copyWith(
+                          color: Colors.white.withOpacity(0.5),
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              
-              // Arrow Icon
-              Icon(
-                Icons.arrow_forward_ios_rounded,
-                color: Colors.white.withOpacity(0.7),
-                size: 20,
-              ),
-            ],
+                
+                // Active Action Indicator
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryTeal.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.arrow_forward_rounded,
+                    color: AppColors.primaryTeal,
+                    size: 18,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
