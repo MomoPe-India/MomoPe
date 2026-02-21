@@ -23,9 +23,9 @@ export function AboutContent() {
                     <motion.div
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-primary-light text-sm font-medium mb-8"
+                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary/10 border border-primary/30 text-white text-sm font-bold mb-8 shadow-lg shadow-primary/10"
                     >
-                        <Sparkles size={16} className="text-primary" />
+                        <Sparkles size={16} className="text-primary animate-pulse" />
                         Our Vision for Bharat
                     </motion.div>
 
@@ -71,7 +71,7 @@ export function AboutContent() {
                         <FounderCard
                             name="Damerla Mohan"
                             role="CEO, Co-founder"
-                            imageSrc="/images/team/mohan.png"
+                            imageSrc="/images/team/mohan_premium.png"
                             linkedinUrl="https://www.linkedin.com/in/mohan-damerla/"
                             email="damerlamohan17@gmail.com"
                         />
