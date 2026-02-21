@@ -15,6 +15,11 @@ import {
     Rocket,
     MessageSquare
 } from "lucide-react";
+import {
+    VelocityAnimation,
+    FirstPrinciplesAnimation,
+    EngineeringExcellenceAnimation
+} from "./OperatingPrinciplesAnimations";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import Link from "next/link";
@@ -93,32 +98,51 @@ export function CareersContent() {
                 </div>
             </section>
 
-            {/* Culture / Values */}
-            <section className="py-24 bg-white">
-                <div className="container mx-auto px-6">
-                    <div className="text-center mb-20">
-                        <h2 className="text-sm font-bold text-primary uppercase tracking-[0.2em] mb-4">MomoPe DNA</h2>
-                        <h3 className="text-4xl font-bold text-secondary mb-6">Our Operating Principles</h3>
-                        <p className="text-text-secondary max-w-2xl mx-auto text-lg leading-relaxed">
-                            We ship high-quality products at an unreasonable velocity. We optimize for autonomy and impact over bureaucracy.
+            {/* Culture / Values - Premium Refinement */}
+            <section className="py-32 bg-white relative overflow-hidden">
+                {/* Section Ambient Glows */}
+                <div className="absolute top-1/4 -right-48 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] -z-0" />
+                <div className="absolute bottom-1/4 -left-48 w-[400px] h-[400px] bg-accent/5 rounded-full blur-[100px] -z-0" />
+
+                <div className="container mx-auto px-6 relative z-10">
+                    <div className="text-center mb-24">
+                        <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface border border-gray-100 shadow-umbra-sm mb-6"
+                        >
+                            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">MomoPe DNA</span>
+                        </motion.div>
+
+                        <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-secondary mb-8 tracking-tighter leading-tight">
+                            Our Operating <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent italic">Principles</span>
+                        </h2>
+
+                        <p className="text-text-secondary max-w-2xl mx-auto text-xl leading-relaxed">
+                            We ship high-fidelity products at an <span className="text-secondary font-bold">unreasonable velocity</span>. We optimize for autonomy and impact over bureaucracy.
                         </p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <ValueCard
-                            icon={<Zap className="text-accent" />}
+                            animation={<VelocityAnimation />}
                             title="Velocity as a Default"
                             text="We favor speed over certainty. We ship, learn, and iterate. Small, frequent releases beat a delayed perfect launch every time."
+                            index={0}
                         />
                         <ValueCard
-                            icon={<Shield className="text-primary" />}
+                            animation={<FirstPrinciplesAnimation />}
                             title="First Principles Thinking"
                             text="We don't do things because 'that's how it's done.' we break problems down to their fundamental truths and build from there."
+                            index={1}
                         />
                         <ValueCard
-                            icon={<Cpu className="text-indigo-500" />}
+                            animation={<EngineeringExcellenceAnimation />}
                             title="Engineering Excellence"
                             text="Code is our craft. We maintain high standards, rigorous testing, and a bias towards automation in everything we do."
+                            index={2}
                         />
                     </div>
                 </div>
@@ -248,15 +272,51 @@ export function CareersContent() {
     );
 }
 
-function ValueCard({ icon, title, text }: { icon: React.ReactNode, title: string, text: string }) {
+function ValueCard({ animation, title, text, index }: { animation: React.ReactNode, title: string, text: string, index: number }) {
     return (
-        <div className="p-10 bg-surface rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-all group">
-            <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center mb-8 shadow-sm group-hover:bg-primary group-hover:text-white transition-all">
-                {React.isValidElement(icon) ? React.cloneElement(icon as React.ReactElement<any>, { size: 32 }) : icon}
+        <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: index * 0.1, duration: 0.6 }}
+            className="p-8 md:p-12 bg-white rounded-[3rem] md:rounded-[3.5rem] border border-gray-100 shadow-umbra-sm hover:shadow-umbra-lg hover:-translate-y-3 transition-all duration-700 group relative overflow-hidden flex flex-col h-full"
+        >
+            {/* Background Texture & Glows */}
+            <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 rounded-full blur-3xl -z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+            <div className="absolute inset-0 opacity-[0.02] pointer-events-none group-hover:opacity-[0.05] transition-opacity duration-700">
+                <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                    <pattern id={`grid-${index}`} width="20" height="20" patternUnits="userSpaceOnUse">
+                        <circle cx="2" cy="2" r="1" fill="currentColor" className="text-secondary" />
+                    </pattern>
+                    <rect width="100%" height="100%" fill={`url(#grid-${index})`} />
+                </svg>
             </div>
-            <h4 className="text-xl font-bold text-secondary mb-4">{title}</h4>
-            <p className="text-text-secondary leading-relaxed">{text}</p>
-        </div>
+
+            {/* Principle Number Badge */}
+            <div className="absolute top-10 right-10 text-[40px] md:text-[60px] font-black text-secondary/5 group-hover:text-primary/10 transition-colors duration-500 leading-none select-none">
+                0{index + 1}
+            </div>
+
+            <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl md:rounded-[2rem] bg-gray-50 flex items-center justify-center mb-8 md:mb-12 shadow-umbra-sm border border-gray-100 group-hover:border-primary/20 group-hover:bg-white transition-all duration-700 relative z-10 hover:scale-110">
+                {animation}
+            </div>
+
+            <div className="flex-1 flex flex-col">
+                <h4 className="text-2xl md:text-3xl font-black text-secondary mb-4 md:mb-6 tracking-tight group-hover:text-primary transition-colors duration-300 leading-tight">
+                    {title}
+                </h4>
+                <p className="text-text-secondary leading-relaxed text-base md:text-lg mb-8">
+                    {text}
+                </p>
+            </div>
+
+            <div className="mt-auto pt-8 border-t border-gray-50 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0">
+                <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] flex items-center gap-2">
+                    MOMOPE CULTURE <ArrowRight size={14} />
+                </span>
+                <div className="w-8 h-px bg-primary/30" />
+            </div>
+        </motion.div>
     );
 }
 
