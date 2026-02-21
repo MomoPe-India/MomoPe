@@ -28,8 +28,8 @@ export function Navbar({ }: NavbarProps) {
     // Default to 'dark' theme for Merchant page (Purple Hero), 'light' for others (including Home).
     const effectiveTheme = (pathname === '/merchant') ? 'dark' : 'light';
 
-    // Special case: Merchant page requests high-contrast (Pure White) logo
-    const isHighContrast = pathname === '/merchant';
+    // Special case: Merchant page requests colored logo for contrast
+    // const isHighContrast = pathname === '/merchant'; // Removed filter logic
 
     const handleScrollTop = (e: React.MouseEvent<HTMLAnchorElement>) => {
         if (pathname === '/') {
@@ -65,7 +65,8 @@ export function Navbar({ }: NavbarProps) {
                                 alt="MomoPe Logo"
                                 fill
                                 className="object-contain object-left"
-                                style={isHighContrast && isDarkHeader ? { filter: 'brightness(0) invert(1)' } : undefined}
+                                // Removed contrast filter that caused blob effect
+                                // style={isHighContrast && isDarkHeader ? { filter: 'brightness(0) invert(1)' } : undefined}
                                 priority
                             />
                         </div>
