@@ -4,8 +4,22 @@ import Link from "next/link";
 import { Navbar } from "@/components/Navbar";
 import { DashboardPreview } from "@/components/DashboardPreview";
 import { RoiCalculator } from "@/components/RoiCalculator";
-import { CheckCircle2, ArrowRight, Wallet, Shield, Zap, Users, Repeat } from "lucide-react";
+import {
+    CheckCircle2,
+    ArrowRight,
+    Wallet,
+    Shield,
+    Zap,
+    Users,
+    Repeat,
+    ArrowUpRight,
+    UserMinus,
+    Smartphone,
+    Coins,
+    TrendingUp
+} from "lucide-react";
 import { motion } from "framer-motion";
+import { StatusQuoVisual, GrowthOSVisual } from "@/components/ComparisonVisuals";
 
 export default function MerchantPage() {
     return (
@@ -108,27 +122,94 @@ export default function MerchantPage() {
                 </div>
             </section>
 
-            {/* 3. Comparison Section */}
-            <section id="comparison" className="py-24 bg-surface">
-                <div className="container mx-auto px-6">
-                    <div className="text-center max-w-3xl mx-auto mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold text-secondary mb-4">Stop Leaving Money on the Table</h2>
-                        <p className="text-gray-500 text-lg">Compare MomoPe with your standard QR code.</p>
+            {/* 3. Comparison Section - The Reality Check Upgrade */}
+            <section id="comparison" className="py-32 bg-surface relative overflow-hidden">
+                <div className="container mx-auto px-6 relative z-10">
+                    <div className="text-center max-w-3xl mx-auto mb-20">
+                        <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-gray-100 shadow-umbra-sm mb-6"
+                        >
+                            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Direct Comparison</span>
+                        </motion.div>
+                        <h2 className="text-4xl md:text-6xl font-black text-secondary mb-8 tracking-tighter leading-[0.95]">
+                            Stop Leaving <br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent italic">Money on the Table</span>
+                        </h2>
+                        <p className="text-xl text-text-secondary leading-relaxed">
+                            A standard QR code is a dead end. MomoPe is a <span className="text-secondary font-bold underline decoration-primary/30 underline-offset-8">commercial growth engine</span>.
+                        </p>
                     </div>
 
-                    <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
-                        <div className="grid grid-cols-3 bg-gray-50 border-b border-gray-200">
-                            <div className="p-6 font-bold text-gray-500">Feature</div>
-                            <div className="p-6 font-bold text-gray-500 text-center border-l border-gray-200">Traditional UPI</div>
-                            <div className="p-6 font-bold text-primary text-center border-l border-gray-200 bg-primary/5">MomoPe Growth OS</div>
-                        </div>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+                        {/* Status Quo - The Traditional Way */}
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            className="bg-white rounded-[4rem] p-12 border border-gray-100 shadow-umbra-sm flex flex-col hover:border-gray-200 transition-colors"
+                        >
+                            <div className="mb-12">
+                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] block mb-4">The Status Quo</span>
+                                <h3 className="text-3xl font-black text-secondary tracking-tight">Traditional UPI QR</h3>
+                            </div>
 
-                        <CorrectionRow feature="Payment Acceptance" oldWay="Yes" newWay="Yes" />
-                        <CorrectionRow feature="Customer Data" oldWay="None" newWay="Full Profile" highlight />
-                        <CorrectionRow feature="Retention Tool" oldWay="None" newWay="Coin Loyalty" highlight />
-                        <CorrectionRow feature="Marketing" oldWay="Impossible" newWay="Push Notifications" />
-                        <CorrectionRow feature="Credit Line" oldWay="Based on Bank" newWay="Based on Transactions" />
-                        <CorrectionRow feature="Cost" oldWay="0% (But 0 Growth)" newWay="Small Commission (High ROI)" />
+                            <div className="flex-1 min-h-[300px] mb-12">
+                                <StatusQuoVisual />
+                            </div>
+
+                            <div className="space-y-4">
+                                <ComparisonPoint label="Customer Data" value="Anonymous" icon={<UserMinus size={18} />} negative />
+                                <ComparisonPoint label="Retention" value="Zero Loop" icon={<Repeat size={18} />} negative />
+                                <ComparisonPoint label="Marketing" value="Impossible" icon={<Smartphone size={18} />} negative />
+                            </div>
+                        </motion.div>
+
+                        {/* The Future - MomoPe Growth OS */}
+                        <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            className="bg-white rounded-[4rem] p-12 border border-primary/20 shadow-umbra-xl flex flex-col relative overflow-hidden group"
+                        >
+                            {/* Ambient Glow */}
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] -z-0" />
+
+                            <div className="relative z-10 mb-12">
+                                <div className="flex items-center justify-between mb-4">
+                                    <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">The Opportunity</span>
+                                    <div className="px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
+                                        <span className="text-[8px] font-black text-primary uppercase tracking-widest">+42% Avg Retention</span>
+                                    </div>
+                                </div>
+                                <h3 className="text-3xl font-black text-secondary tracking-tight">MomoPe Growth OS</h3>
+                            </div>
+
+                            <div className="flex-1 min-h-[300px] mb-12 relative z-10">
+                                <GrowthOSVisual />
+                            </div>
+
+                            <div className="space-y-4 relative z-10">
+                                <ComparisonPoint label="Customer Data" value="Rich Profiles" icon={<Users size={18} />} highlight />
+                                <ComparisonPoint label="Retention" value="Coin Loyalty Loop" icon={<Coins size={18} />} highlight />
+                                <ComparisonPoint label="Marketing" value="Direct Notifications" icon={<Smartphone size={18} />} highlight />
+                            </div>
+
+                            <div className="mt-12 pt-8 border-t border-gray-50 flex items-center justify-between group-hover:border-primary/20 transition-colors relative z-10">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                                        <TrendingUp size={20} />
+                                    </div>
+                                    <span className="text-xs font-black text-secondary uppercase tracking-widest italic">Built for Scale</span>
+                                </div>
+                                <button className="flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-[0.25em] group/btn">
+                                    View ROI <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                                </button>
+                            </div>
+                        </motion.div>
                     </div>
                 </div>
             </section>
@@ -355,6 +436,27 @@ function CorrectionRow({ feature, oldWay, newWay, highlight }: { feature: string
             <div className="p-6 font-medium text-gray-700 flex items-center">{feature}</div>
             <div className="p-6 text-gray-500 text-center border-l border-gray-200 flex items-center justify-center">{oldWay}</div>
             <div className={`p-6 font-bold text-center border-l border-gray-200 flex items-center justify-center ${highlight ? 'text-primary' : 'text-gray-800'}`}>{newWay}</div>
+        </div>
+    );
+}
+
+function ComparisonPoint({ label, value, icon, negative, highlight }: { label: string, value: string, icon: React.ReactNode, negative?: boolean, highlight?: boolean }) {
+    return (
+        <div className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${highlight ? 'bg-primary/[0.02] border-primary/10 shadow-sm' : 'bg-gray-50/50 border-gray-100'}`}>
+            <div className="flex items-center gap-4">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${negative ? 'bg-gray-100 text-gray-400' : 'bg-primary/10 text-primary'}`}>
+                    {icon}
+                </div>
+                <div>
+                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1">{label}</span>
+                    <span className={`text-sm font-bold ${negative ? 'text-gray-500' : 'text-secondary'}`}>{value}</span>
+                </div>
+            </div>
+            {!negative && (
+                <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
+                    <CheckCircle2 size={14} className="text-primary" />
+                </div>
+            )}
         </div>
     );
 }
