@@ -84,23 +84,22 @@ export default function MerchantPage() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
-                        {/* Connecting Line (Desktop) */}
-                        <div className="hidden md:block absolute top-12 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-gray-200 to-transparent -z-10" />
+                        <div className="hidden md:block absolute top-[160px] left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-gray-200 to-transparent -z-10" />
 
                         <ProcessCard
-                            icon={<Users size={32} />}
+                            illustration={<AcquisitionIllustration />}
                             step="01"
                             title="Acquisition"
                             desc="Customers find you on the MomoPe App or scan your QR code. No expensive ads needed."
                         />
                         <ProcessCard
-                            icon={<Wallet size={32} />}
+                            illustration={<TransactionIllustration />}
                             step="02"
                             title="Transaction"
                             desc="Customer pays. You get 80% instant cash + 20% is reinvested into Customer Coins (your acquisition cost)."
                         />
                         <ProcessCard
-                            icon={<Repeat size={32} />}
+                            illustration={<RetentionIllustration />}
                             step="03"
                             title="Retention"
                             desc="Customer MUST return to redeem those coins. This creates an infinite loyalty loop."
@@ -238,17 +237,114 @@ export default function MerchantPage() {
     );
 }
 
-function ProcessCard({ icon, step, title, desc }: { icon: React.ReactNode, step: string, title: string, desc: string }) {
+function ProcessCard({ illustration, step, title, desc }: { illustration: React.ReactNode, step: string, title: string, desc: string }) {
     return (
-        <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl transition-all relative group z-10">
-            <div className="absolute -top-6 -left-6 text-9xl font-black text-gray-50 opacity-50 select-none group-hover:scale-110 transition-transform">
+        <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 relative group z-10 flex flex-col items-center text-center">
+            <div className="absolute -top-6 -left-6 text-9xl font-black text-gray-50 opacity-50 select-none group-hover:scale-110 transition-transform duration-700">
                 {step}
             </div>
-            <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 relative z-10 group-hover:bg-primary group-hover:text-white transition-colors">
-                {icon}
+
+            <div className="mb-8 relative z-10 w-full flex justify-center h-40">
+                {illustration}
             </div>
+
             <h3 className="text-2xl font-bold text-secondary mb-4 relative z-10">{title}</h3>
             <p className="text-gray-500 leading-relaxed relative z-10">{desc}</p>
+        </div>
+    );
+}
+
+function AcquisitionIllustration() {
+    return (
+        <div className="relative w-32 h-32 flex items-center justify-center">
+            {/* Background Glow */}
+            <motion.div
+                animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+                transition={{ duration: 4, repeat: Infinity }}
+                className="absolute inset-0 bg-primary/20 rounded-full blur-2xl"
+            />
+            {/* Floating Shapes */}
+            <motion.div
+                animate={{ y: [-10, 10, -10], rotate: [0, 10, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -top-4 -right-4 w-12 h-12 bg-teal-100 rounded-lg rotate-12 backdrop-blur-sm border border-white/50 shadow-lg"
+            />
+            <motion.div
+                animate={{ x: [-10, 10, -10], rotate: [0, -10, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -bottom-2 -left-4 w-10 h-10 bg-purple-100 rounded-full backdrop-blur-sm border border-white/50 shadow-lg"
+            />
+            {/* Central Icon Container */}
+            <div className="w-24 h-24 bg-white rounded-3xl shadow-xl flex items-center justify-center z-10 border border-gray-50 overflow-hidden group-hover:scale-110 transition-transform duration-500">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent" />
+                <Users size={48} className="text-primary relative z-10" />
+            </div>
+        </div>
+    );
+}
+
+function TransactionIllustration() {
+    return (
+        <div className="relative w-32 h-32 flex items-center justify-center">
+            <motion.div
+                animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.4, 0.2] }}
+                transition={{ duration: 5, repeat: Infinity }}
+                className="absolute inset-0 bg-emerald-400/20 rounded-full blur-2xl"
+            />
+            {/* Floating "Coins" */}
+            <motion.div
+                animate={{ y: [-20, 0, -20], opacity: [0, 1, 0] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeOut" }}
+                className="absolute top-0 right-0 w-8 h-8 bg-yellow-400 rounded-full border-2 border-white shadow-md z-20 flex items-center justify-center text-[10px] font-bold text-white"
+            >
+                ₹
+            </motion.div>
+            <motion.div
+                animate={{ y: [-15, 5, -15], opacity: [0, 0.8, 0] }}
+                transition={{ duration: 3, delay: 1, repeat: Infinity, ease: "easeOut" }}
+                className="absolute top-10 left-0 w-6 h-6 bg-yellow-300 rounded-full border-2 border-white shadow-md z-20"
+            />
+
+            <div className="w-24 h-24 bg-white rounded-3xl shadow-xl flex items-center justify-center z-10 border border-gray-50 relative group-hover:scale-110 transition-transform duration-500">
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent" />
+                <Wallet size={48} className="text-emerald-500 relative z-10" />
+            </div>
+        </div>
+    );
+}
+
+function RetentionIllustration() {
+    return (
+        <div className="relative w-32 h-32 flex items-center justify-center">
+            <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 border-2 border-dashed border-primary/20 rounded-full"
+            />
+            <motion.div
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 3, repeat: Infinity }}
+                className="absolute inset-4 bg-primary/5 rounded-full blur-xl"
+            />
+
+            <div className="w-24 h-24 bg-white rounded-3xl shadow-xl flex items-center justify-center z-10 border border-gray-50 overflow-hidden group-hover:scale-110 transition-transform duration-500">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent" />
+                <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                >
+                    <Repeat size={48} className="text-primary" />
+                </motion.div>
+            </div>
+
+            {/* Orbiting Dot */}
+            <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0"
+            >
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-4 bg-primary rounded-full shadow-lg border-2 border-white" />
+            </motion.div>
         </div>
     );
 }
