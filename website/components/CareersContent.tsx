@@ -52,9 +52,16 @@ export function CareersContent() {
                         <motion.h1
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="text-5xl md:text-7xl font-bold mb-8 text-white tracking-tight"
+                            className="text-5xl md:text-7xl font-black mb-8 text-white tracking-tight leading-tight"
                         >
-                            Build the <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary-light to-teal-200">Financial OS</span> <br />
+                            Build the <motion.span
+                                initial={{ opacity: 0, scale: 0.98, filter: "blur(8px)" }}
+                                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                                transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
+                                className="inline-block bg-clip-text text-transparent bg-gradient-to-r from-primary to-momo-blue animate-gradient-x drop-shadow-[0_5px_15px_rgba(0,114,255,0.25)]"
+                            >
+                                Financial OS
+                            </motion.span> <br />
                             for Local India
                         </motion.h1>
 
@@ -117,7 +124,7 @@ export function CareersContent() {
                         </motion.div>
 
                         <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-secondary mb-8 tracking-tighter leading-tight">
-                            Our Operating <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent italic">Principles</span>
+                            Our Operating <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-momo-blue animate-gradient-x italic drop-shadow-[0_5px_15px_rgba(0,114,255,0.25)]">Principles</span>
                         </h2>
 
                         <p className="text-text-secondary max-w-2xl mx-auto text-xl leading-relaxed">

@@ -30,9 +30,16 @@ export function DownloadContent() {
                                 <Star size={14} fill="currentColor" /> #1 Rewards App
                             </div>
 
-                            <h1 className="text-5xl md:text-7xl font-black text-[#35255e] mb-6 leading-tight">
+                            <h1 className="text-5xl md:text-7xl font-black text-secondary mb-8 leading-tight tracking-tight">
                                 Your Money, <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00C4A7] to-blue-500">Upgraded.</span>
+                                <motion.span
+                                    initial={{ opacity: 0, scale: 0.98, filter: "blur(8px)" }}
+                                    animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                                    transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
+                                    className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-primary to-momo-blue animate-gradient-x drop-shadow-[0_5px_15px_rgba(0,114,255,0.25)]"
+                                >
+                                    Upgraded.
+                                </motion.span>
                             </h1>
 
                             <p className="text-xl text-gray-500 mb-10 max-w-lg mx-auto lg:mx-0 leading-relaxed">

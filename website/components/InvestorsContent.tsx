@@ -26,9 +26,16 @@ export function InvestorsContent() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1 }}
-                            className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-secondary"
+                            className="text-5xl md:text-7xl font-black mb-8 leading-tight tracking-tight text-secondary"
                         >
-                            Building the <span className="text-primary">Engagement Layer</span> <br /> for 60M+ Indian Merchants
+                            Building the <motion.span
+                                initial={{ opacity: 0, scale: 0.98, filter: "blur(8px)" }}
+                                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                                transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
+                                className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-primary to-momo-blue animate-gradient-x drop-shadow-[0_5px_15px_rgba(0,114,255,0.25)]"
+                            >
+                                Engagement Layer
+                            </motion.span> <br /> for 60M+ Indian Merchants
                         </motion.h1>
                         <motion.p
                             initial={{ opacity: 0, y: 20 }}

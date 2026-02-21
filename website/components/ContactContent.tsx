@@ -24,14 +24,21 @@ export function ContactContent() {
                     >
                         <MessageSquare size={14} /> We're here to help
                     </motion.div>
-                    <motion.h1
+                    <motion.h2
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="text-4xl md:text-6xl font-black text-[#35255e] mb-6 tracking-tight"
+                        className="text-5xl md:text-7xl font-black text-secondary mb-8 tracking-tight leading-tight"
                     >
-                        Let's Start a <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00C4A7] to-blue-600">Conversation</span>
-                    </motion.h1>
+                        Let&apos;s Start a <motion.span
+                            initial={{ opacity: 0, scale: 0.98, filter: "blur(8px)" }}
+                            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                            transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
+                            className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-primary to-momo-blue animate-gradient-x drop-shadow-[0_5px_15px_rgba(0,114,255,0.25)]"
+                        >
+                            Conversation
+                        </motion.span>
+                    </motion.h2>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}

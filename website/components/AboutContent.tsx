@@ -105,10 +105,17 @@ export function AboutContent() {
                     <motion.h1
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="text-5xl md:text-7xl font-bold mb-8 text-white tracking-tight"
+                        className="text-5xl md:text-7xl font-black mb-8 text-white tracking-tight leading-tight"
                     >
                         Revolutionizing <br />
-                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary-light to-teal-200">Local Commerce</span>
+                        <motion.span
+                            initial={{ opacity: 0, scale: 0.98, filter: "blur(8px)" }}
+                            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                            transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
+                            className="inline-block bg-clip-text text-transparent bg-gradient-to-r from-primary to-momo-blue animate-gradient-x drop-shadow-[0_5px_15px_rgba(0,114,255,0.25)]"
+                        >
+                            Local Commerce
+                        </motion.span>
                     </motion.h1>
 
                     <motion.p
@@ -200,7 +207,7 @@ export function AboutContent() {
 
                             <h2 className="text-5xl md:text-7xl lg:text-8xl font-black leading-[0.95] tracking-tighter">
                                 Built in <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary-light to-teal-200 italic">Kadapa</span>.<br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-momo-blue animate-gradient-x italic drop-shadow-[0_5px_15px_rgba(0,114,255,0.25)]">Kadapa</span>.<br />
                                 <span className="inline-block relative">
                                     Bharat.
                                     <motion.div
@@ -321,9 +328,9 @@ export function AboutContent() {
                                 <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Our Purpose</span>
                             </motion.div>
 
-                            <h2 className="text-5xl md:text-6xl font-black text-secondary mb-8 tracking-tighter leading-[0.95]">
+                            <h2 className="text-4xl md:text-6xl font-black text-secondary mb-8 tracking-tighter leading-tight">
                                 Our Mission & <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent italic">Core Philosophy</span>
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-momo-blue animate-gradient-x italic drop-shadow-[0_5px_15px_rgba(0,114,255,0.25)]">Core Philosophy</span>
                             </h2>
                             <p className="text-2xl text-text-secondary leading-relaxed mb-16 max-w-xl">
                                 We believe technology should serve the many, not the few. Our philosophy is rooted in <span className="text-secondary font-bold underline decoration-primary/30 underline-offset-8">decentralizing commerce</span>.

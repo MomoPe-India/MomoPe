@@ -47,10 +47,17 @@ export default function MerchantPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="text-5xl md:text-7xl font-black mb-8 leading-tight tracking-tight"
+                        className="text-5xl md:text-7xl font-black mb-8 leading-tight tracking-tight text-white"
                     >
-                        Don't Just Accept Payments.<br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-teal-200">Multiply Your Customers.</span>
+                        Don&apos;t Just Accept Payments.<br />
+                        <motion.span
+                            initial={{ opacity: 0, scale: 0.98, filter: "blur(8px)" }}
+                            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                            transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
+                            className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-primary to-momo-blue animate-gradient-x drop-shadow-[0_5px_15px_rgba(0,114,255,0.25)]"
+                        >
+                            Multiply Your Customers.
+                        </motion.span>
                     </motion.h1>
 
                     <motion.p
@@ -94,8 +101,8 @@ export default function MerchantPage() {
             <section className="py-24 bg-white">
                 <div className="container mx-auto px-6">
                     <div className="text-center max-w-3xl mx-auto mb-20">
-                        <h2 className="text-3xl md:text-5xl font-bold text-secondary mb-6">The Growth Flywheel</h2>
-                        <p className="text-gray-500 text-xl">How MomoPe turns one-time walk-ins into rigorous regulars.</p>
+                        <h2 className="text-4xl md:text-6xl font-black text-secondary mb-6 tracking-tighter leading-tight">The Growth Flywheel</h2>
+                        <p className="text-gray-500 text-xl tracking-tight">How MomoPe turns one-time walk-ins into rigorous regulars.</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
@@ -138,7 +145,7 @@ export default function MerchantPage() {
                         </motion.div>
                         <h2 className="text-4xl md:text-6xl font-black text-secondary mb-8 tracking-tighter leading-[0.95]">
                             Stop Leaving <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent italic">Money on the Table</span>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-momo-blue animate-gradient-x italic drop-shadow-[0_5px_15px_rgba(0,114,255,0.25)]">Money on the Table</span>
                         </h2>
                         <p className="text-xl text-text-secondary leading-relaxed">
                             A standard QR code is a dead end. MomoPe is a <span className="text-secondary font-bold underline decoration-primary/30 underline-offset-8">commercial growth engine</span>.
@@ -229,8 +236,8 @@ export default function MerchantPage() {
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-green-500/5 rounded-full blur-[100px] -z-10" />
                 <div className="container mx-auto px-6 relative z-10">
                     <div className="text-center max-w-3xl mx-auto mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold text-secondary mb-4">Calculate Your ROI</h2>
-                        <p className="text-text-secondary text-lg">See exactly how much revenue you're missing out on.</p>
+                        <h2 className="text-4xl md:text-6xl font-black text-secondary mb-6 tracking-tighter leading-tight">Calculate Your ROI</h2>
+                        <p className="text-text-secondary text-xl tracking-tight">See exactly how much revenue you&apos;re missing out on.</p>
                     </div>
                     <div className="glass-card p-2 rounded-3xl shadow-2xl shadow-gray-200/50">
                         <RoiCalculator />
@@ -283,7 +290,7 @@ export default function MerchantPage() {
             <section className="py-24 bg-white border-t border-gray-100">
                 <div className="container mx-auto px-6 max-w-4xl">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl font-bold text-secondary mb-4">Frequent Questions</h2>
+                        <h2 className="text-4xl md:text-6xl font-black text-secondary mb-8 tracking-tighter leading-tight">Frequent Questions</h2>
                     </div>
 
                     <div className="space-y-6">
