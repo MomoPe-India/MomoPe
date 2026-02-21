@@ -65,10 +65,10 @@ export function Testimonials() {
                 </div>
 
                 <div className="flex gap-4">
-                    <button onClick={() => scroll('left')} className="p-3 rounded-full bg-white border border-gray-200 text-gray-600 hover:bg-[#35255e] hover:text-white transition-all shadow-sm hover:shadow-lg">
+                    <button onClick={() => scroll('left')} aria-label="Previous testimonial" className="p-3 rounded-full bg-white border border-gray-200 text-gray-600 hover:bg-[#35255e] hover:text-white transition-all shadow-sm hover:shadow-lg">
                         <ChevronLeft size={24} />
                     </button>
-                    <button onClick={() => scroll('right')} className="p-3 rounded-full bg-white border border-gray-200 text-gray-600 hover:bg-[#35255e] hover:text-white transition-all shadow-sm hover:shadow-lg">
+                    <button onClick={() => scroll('right')} aria-label="Next testimonial" className="p-3 rounded-full bg-white border border-gray-200 text-gray-600 hover:bg-[#35255e] hover:text-white transition-all shadow-sm hover:shadow-lg">
                         <ChevronRight size={24} />
                     </button>
                 </div>
@@ -81,7 +81,7 @@ export function Testimonials() {
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
                 {TESTIMONIALS.map((t, i) => (
-                    <div
+                    <article
                         key={i}
                         className="min-w-[350px] md:min-w-[450px] p-8 md:p-10 bg-white rounded-[2.5rem] border border-gray-100 snap-center hover:shadow-2xl hover:shadow-purple-900/10 transition-all duration-500 relative group flex flex-col"
                     >
@@ -115,7 +115,7 @@ export function Testimonials() {
                                 <div className="text-sm text-primary font-bold uppercase tracking-wider">{t.role}</div>
                             </div>
                         </div>
-                    </div>
+                    </article>
                 ))}
             </div>
         </section>

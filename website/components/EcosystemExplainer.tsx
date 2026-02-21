@@ -5,7 +5,7 @@ import { ArrowRight, X, Check, RefreshCw, Coins, Store, Users, Zap } from "lucid
 
 export function EcosystemExplainer() {
     return (
-        <section className="py-24 bg-white relative overflow-hidden">
+        <section aria-labelledby="ecosystem-title" className="py-24 bg-white relative overflow-hidden">
             <div className="container mx-auto px-6">
                 <div className="text-center max-w-3xl mx-auto mb-20">
                     <motion.div
@@ -21,6 +21,7 @@ export function EcosystemExplainer() {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.1 }}
+                        id="ecosystem-title"
                         className="text-4xl md:text-5xl font-black text-[#35255e] mb-6"
                     >
                         The First &quot;Win-Win-Win&quot; <br /> Commerce Cloud.
@@ -43,7 +44,7 @@ export function EcosystemExplainer() {
                         <div className="absolute inset-0 bg-red-50 rounded-3xl transform -rotate-2 scale-95 transition-transform group-hover:rotate-0" />
                         <div className="bg-white border-2 border-red-100 p-10 rounded-3xl relative shadow-sm h-[400px] flex flex-col justify-between">
                             <h3 className="text-2xl font-bold text-gray-400 mb-6 flex items-center gap-3">
-                                <span className="w-8 h-8 rounded-full bg-red-100 text-red-400 flex items-center justify-center"><X size={18} /></span>
+                                <span className="w-8 h-8 rounded-full bg-red-100 text-red-400 flex items-center justify-center" aria-hidden="true"><X size={18} /></span>
                                 The Old Way
                             </h3>
 
@@ -90,7 +91,7 @@ export function EcosystemExplainer() {
 
                         <div className="bg-white/80 backdrop-blur-xl border border-white/50 p-8 rounded-3xl relative shadow-2xl h-[450px] overflow-hidden">
                             <h3 className="text-2xl font-bold text-[#35255e] mb-2 flex items-center gap-3 relative z-10">
-                                <span className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center"><Check size={18} /></span>
+                                <span className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center" aria-hidden="true"><Check size={18} /></span>
                                 The Growth Engine
                             </h3>
 
