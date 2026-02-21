@@ -43,7 +43,7 @@ export function HeroSection() {
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1 }}
-                            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black text-secondary tracking-tight mb-6 leading-[1.05] whitespace-nowrap"
+                            className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-black text-secondary tracking-tight mb-6 leading-[1.05]"
                         >
                             Scan. Pay. <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-dark">& Earn.</span>
                         </motion.h1>

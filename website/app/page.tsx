@@ -38,7 +38,7 @@ export default function Home() {
         </div>
 
         <div className="container mx-auto px-6 relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center divide-y md:divide-y-0 md:divide-x divide-white/10">
+          <div aria-label="Key Platform Statistics" className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center divide-y md:divide-y-0 md:divide-x divide-white/10">
             <StatItem icon={<Users size={32} />} value="15,000+" label="Active Users" />
             <StatItem icon={<Store size={32} />} value="500+" label="Merchant Partners" />
             <StatItem icon={<TrendingUp size={32} />} value="₹2.5Cr" label="Processed Volume" />
@@ -105,11 +105,11 @@ export default function Home() {
 
 function StatItem({ icon, value, label }: { icon: React.ReactNode, value: string, label: string }) {
   return (
-    <div className="flex flex-col items-center p-6">
-      <div className="mb-4 text-[#00C4A7] opacity-80">{icon}</div>
+    <article className="flex flex-col items-center p-6">
+      <div aria-hidden="true" className="mb-4 text-[#00C4A7] opacity-80">{icon}</div>
       <div className="text-4xl md:text-5xl font-black mb-2">{value}</div>
-      <div className="text-sm font-bold uppercase tracking-widest opacity-50">{label}</div>
-    </div>
+      <h3 className="text-sm font-bold uppercase tracking-widest opacity-50">{label}</h3>
+    </article>
   )
 }
 

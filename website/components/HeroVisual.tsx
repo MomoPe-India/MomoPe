@@ -19,7 +19,7 @@ export function HeroVisual() {
                 className="relative z-10 w-full h-full max-w-[500px] md:max-w-[650px] mx-auto"
             >
                 <Image
-                    src="/images/hero-lady.png"
+                    src="/images/hero-lady.webp"
                     alt="MomoPe Happy User"
                     fill
                     className="object-contain drop-shadow-2xl hover:scale-[1.02] transition-transform duration-700"

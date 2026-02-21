@@ -5,7 +5,7 @@ import { Check, Sparkles } from "lucide-react";
 
 export function HowItWorks() {
     return (
-        <section className="py-28 bg-[#F8FAFC] relative overflow-hidden">
+        <section aria-labelledby="how-it-works-title" className="py-28 bg-[#F8FAFC] relative overflow-hidden">
             {/* Background Decorations */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
                 <div className="absolute top-[10%] left-[5%] w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
@@ -27,6 +27,7 @@ export function HowItWorks() {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.1 }}
+                        id="how-it-works-title"
                         className="text-4xl md:text-6xl font-black text-[#35255e] mb-6 leading-tight"
                     >
                         Pay like normal. <br />
@@ -80,20 +81,22 @@ function StepCard({ number, title, desc, illustration }: { number: string, title
             whileHover={{ y: -10 }}
             className="group flex flex-col items-center text-center bg-white p-2 rounded-[2.5rem] shadow-soft border border-white/60 relative hover:shadow-2xl transition-all duration-500"
         >
-            {/* Illustration Display */}
-            <div className="w-full h-80 bg-gradient-to-b from-gray-50 to-white rounded-[2rem] mb-8 overflow-hidden relative flex items-center justify-center border border-gray-100 group-hover:border-primary/20 transition-colors">
-                {illustration}
-            </div>
-
-            <div className="px-6 pb-8">
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#35255e] text-white font-bold text-lg mb-6 shadow-lg shadow-purple-900/20 group-hover:scale-110 transition-transform">
-                    {number}
+            <article className="flex flex-col items-center">
+                {/* Illustration Display */}
+                <div aria-hidden="true" className="w-full h-80 bg-gradient-to-b from-gray-50 to-white rounded-[2rem] mb-8 overflow-hidden relative flex items-center justify-center border border-gray-100 group-hover:border-primary/20 transition-colors">
+                    {illustration}
                 </div>
-                <h3 className="text-2xl font-bold text-[#35255e] mb-3 group-hover:text-primary transition-colors">{title}</h3>
-                <p className="text-gray-500 leading-relaxed font-medium">
-                    {desc}
-                </p>
-            </div>
+
+                <div className="px-6 pb-8">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#35255e] text-white font-bold text-lg mb-6 shadow-lg shadow-purple-900/20 group-hover:scale-110 transition-transform">
+                        {number}
+                    </div>
+                    <h3 className="text-2xl font-bold text-[#35255e] mb-3 group-hover:text-primary transition-colors">{title}</h3>
+                    <p className="text-gray-500 leading-relaxed font-medium">
+                        {desc}
+                    </p>
+                </div>
+            </article>
         </motion.div>
     );
 }
