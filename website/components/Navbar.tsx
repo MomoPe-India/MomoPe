@@ -25,8 +25,9 @@ export function Navbar({ }: NavbarProps) {
 
     const pathname = usePathname();
 
-    // Default to 'dark' theme for Merchant page (Purple Hero), 'light' for others (including Home).
-    const effectiveTheme = (pathname === '/merchant') ? 'dark' : 'light';
+    // Default to 'dark' theme for pages with Dark Heroes (Merchant, About, Careers)
+    const darkHeroPages = ['/merchant', '/about', '/careers'];
+    const effectiveTheme = darkHeroPages.includes(pathname) ? 'dark' : 'light';
 
     // Special case: Merchant page requests colored logo for contrast
     // const isHighContrast = pathname === '/merchant'; // Removed filter logic

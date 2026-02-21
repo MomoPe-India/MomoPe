@@ -197,7 +197,7 @@ export function AboutContent() {
                 </div>
             </section>
 
-            <Footer />
+
         </main>
     );
 }

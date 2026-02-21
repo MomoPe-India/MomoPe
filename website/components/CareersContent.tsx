@@ -243,7 +243,7 @@ export function CareersContent() {
                 </div>
             </section>
 
-            <Footer />
+
         </main>
     );
 }
