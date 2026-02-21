@@ -31,23 +31,42 @@ export const metadata: Metadata = {
   authors: [{ name: "MomoPe Team" }],
   creator: "MomoPe",
   publisher: "MomoPe Digital Hub Pvt Ltd",
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     type: "website",
     locale: "en_IN",
     url: "https://momope.com",
     title: "MomoPe | Scan. Pay. & Earn.",
-    description: "The rewards platform that actually works. Join 10k+ users earning real value on every transaction.",
+    description: "The rewards platform that actually works. Join 10k+ users earning real value on every transaction at local stores.",
     siteName: "MomoPe",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "MomoPe - Scan. Pay. & Earn.",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "MomoPe | The Financial OS for Local Commerce",
-    description: "Accept payments, manage customers, and grow your revenue.",
+    description: "Accept payments, manage customers, and grow your revenue with India's first commerce cloud.",
     creator: "@momope",
+    images: ["/twitter-card.png"],
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
 };
 
