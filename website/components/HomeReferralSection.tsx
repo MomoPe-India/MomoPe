@@ -98,6 +98,7 @@ export function HomeReferralSection() {
                                         step={3}
                                         color="text-primary"
                                         bg="bg-teal-50"
+                                        isCoin
                                     />
                                 </>
                             ) : (
@@ -125,6 +126,7 @@ export function HomeReferralSection() {
                                         step={3}
                                         color="text-amber-500"
                                         bg="bg-amber-50"
+                                        isCoin
                                     />
                                 </>
                             )}
@@ -155,9 +157,10 @@ interface CardProps {
     step: number;
     color: string;
     bg: string;
+    isCoin?: boolean;
 }
 
-function ReferralCard({ icon, title, desc, step, color, bg }: CardProps) {
+function ReferralCard({ icon, title, desc, step, color, bg, isCoin }: CardProps) {
     return (
         <div className="group relative bg-white/80 backdrop-blur-xl p-8 rounded-3xl border border-white/50 shadow-umbra-lg hover:shadow-premium hover:-translate-y-2 transition-all duration-500 overflow-hidden">
 

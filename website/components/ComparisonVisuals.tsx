@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Users, Zap, Shield, Repeat, Smartphone, QrCode, TrendingUp, UserMinus } from "lucide-react";
+import Image from "next/image";
 
 /**
  * StatusQuoVisual - Represents the "Dead End" Traditional UPI
@@ -112,12 +113,19 @@ export function GrowthOSVisual() {
                                     repeat: Infinity,
                                     ease: "easeOut"
                                 }}
-                                className="w-12 h-12 bg-white rounded-2xl shadow-lg border border-primary/20 flex items-center justify-center"
+                                className="w-14 h-14 bg-white rounded-2xl shadow-lg border border-primary/20 flex items-center justify-center overflow-hidden"
                             >
                                 {i % 2 === 0 ? (
-                                    <Users size={20} className="text-primary" />
+                                    <Users size={24} className="text-primary" />
                                 ) : (
-                                    <div className="w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center text-[10px] font-black text-white">$</div>
+                                    <div className="relative w-full h-full p-1 bg-black">
+                                        <Image
+                                            src="/images/momo-coin.png"
+                                            alt="Momo Coin"
+                                            fill
+                                            className="object-contain"
+                                        />
+                                    </div>
                                 )}
                             </motion.div>
 

@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Check, Sparkles } from "lucide-react";
+import Image from "next/image";
 
 export function HowItWorks() {
     return (
@@ -191,9 +192,8 @@ function CoinStackIllustration() {
                     className="absolute bottom-14 z-10"
                     style={{ marginBottom: i * 14 }} // Stack offset
                 >
-                    <div className="w-20 h-20 rounded-full bg-gradient-to-b from-amber-300 to-amber-500 border-[3px] border-amber-600 shadow-[0_4px_0_rgb(180,83,9)] flex items-center justify-center text-amber-900 font-black text-3xl">
-                        ₹
-                        <div className="absolute inset-2 rounded-full border border-white/40" />
+                    <div className="w-20 h-20 rounded-full bg-black border-[3px] border-amber-600 shadow-[0_4px_0_rgb(180,83,9)] flex items-center justify-center overflow-hidden relative">
+                        <Image src="/images/momo-coin.png" alt="Momo Coin" fill className="object-contain p-2" />
                     </div>
                 </motion.div>
             ))}

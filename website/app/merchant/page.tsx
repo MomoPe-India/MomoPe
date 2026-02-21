@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { StatusQuoVisual, GrowthOSVisual } from "@/components/ComparisonVisuals";
+import Image from "next/image";
 
 export default function MerchantPage() {
     return (
@@ -194,7 +195,16 @@ export default function MerchantPage() {
 
                             <div className="space-y-4 relative z-10">
                                 <ComparisonPoint label="Customer Data" value="Rich Profiles" icon={<Users size={18} />} highlight />
-                                <ComparisonPoint label="Retention" value="Coin Loyalty Loop" icon={<Coins size={18} />} highlight />
+                                <ComparisonPoint
+                                    label="Retention"
+                                    value="Coin Loyalty Loop"
+                                    icon={
+                                        <div className="relative w-6 h-6 bg-black rounded-lg overflow-hidden">
+                                            <Image src="/images/momo-coin.png" alt="Coin" fill className="object-contain" />
+                                        </div>
+                                    }
+                                    highlight
+                                />
                                 <ComparisonPoint label="Marketing" value="Direct Notifications" icon={<Smartphone size={18} />} highlight />
                             </div>
 

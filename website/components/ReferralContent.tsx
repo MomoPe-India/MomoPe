@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Share2, UserPlus, Gift, Copy, ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
+import Image from "next/image";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 
@@ -70,6 +71,7 @@ export function ReferralContent() {
                                     title="Both Earn Rewards"
                                     desc="You and your friend instantly receive bonus Momo Coins in your wallets."
                                     step={3}
+                                    isCoin
                                 />
                             </div>
                         </div>
@@ -86,13 +88,18 @@ export function ReferralContent() {
 
                                 {/* Main Stats */}
                                 <div className="grid grid-cols-2 gap-4 mb-8">
-                                    <div className="p-4 bg-teal-50 rounded-2xl border border-teal-100">
-                                        <div className="text-3xl font-black text-[#00C4A7]">2,400</div>
-                                        <div className="text-xs font-bold text-teal-600/70 uppercase">Coins Earned</div>
+                                    <div className="p-4 bg-black rounded-2xl border border-teal-100 flex items-center gap-3">
+                                        <div className="relative w-10 h-10 shrink-0">
+                                            <Image src="/images/momo-coin.png" alt="Coin" fill className="object-contain" />
+                                        </div>
+                                        <div>
+                                            <div className="text-2xl font-black text-[#00C4A7]">2,400</div>
+                                            <div className="text-[10px] font-bold text-teal-600/70 uppercase">Coins Earned</div>
+                                        </div>
                                     </div>
                                     <div className="p-4 bg-purple-50 rounded-2xl border border-purple-100">
-                                        <div className="text-3xl font-black text-purple-600">12</div>
-                                        <div className="text-xs font-bold text-purple-600/70 uppercase">Friends Joined</div>
+                                        <div className="text-2xl font-black text-purple-600">12</div>
+                                        <div className="text-[10px] font-bold text-purple-600/70 uppercase">Friends Joined</div>
                                     </div>
                                 </div>
 
@@ -143,11 +150,17 @@ export function ReferralContent() {
     );
 }
 
-function StepItem({ icon, title, desc, step }: { icon: React.ReactNode, title: string, desc: string, step: number }) {
+function StepItem({ icon, title, desc, step, isCoin }: { icon: React.ReactNode, title: string, desc: string, step: number, isCoin?: boolean }) {
     return (
         <div className="flex gap-6 relative bg-white p-6 rounded-2xl border border-gray-100 shadow-sm z-10">
-            <div className="w-14 h-14 rounded-full bg-[#35255e] text-white flex items-center justify-center shrink-0 shadow-lg shadow-[#35255e]/20">
-                {icon}
+            <div className={`w-14 h-14 rounded-full ${isCoin ? 'bg-black' : 'bg-[#35255e]'} text-white flex items-center justify-center shrink-0 shadow-lg ${isCoin ? '' : 'shadow-[#35255e]/20'} overflow-hidden relative`}>
+                {isCoin ? (
+                    <div className="relative w-full h-full p-2.5">
+                        <Image src="/images/momo-coin.png" alt="Coin" fill className="object-contain" />
+                    </div>
+                ) : (
+                    icon
+                )}
             </div>
             <div>
                 <div className="text-xs font-bold text-[#00C4A7] uppercase mb-1">Step {step}</div>

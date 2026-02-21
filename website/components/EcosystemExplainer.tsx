@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ArrowRight, X, Check, RefreshCw, Coins, Store, Users, Zap } from "lucide-react";
+import Image from "next/image";
 
 export function EcosystemExplainer() {
     return (
@@ -182,9 +183,15 @@ function OrbitingNode({ angle, color, icon, label, delay }: { angle: number, col
                 <motion.div
                     animate={{ rotate: -360 }}
                     transition={{ duration: 10, repeat: Infinity, ease: "linear", delay: -delay * 3.33 }}
-                    className={`w-14 h-14 ${color} rounded-2xl shadow-lg flex items-center justify-center text-white relative z-10`}
+                    className={`w-14 h-14 ${color === 'bg-amber-500' ? 'bg-black' : color} rounded-2xl shadow-lg flex items-center justify-center text-white relative z-10 overflow-hidden`}
                 >
-                    {icon}
+                    {color === 'bg-amber-500' ? (
+                        <div className="relative w-full h-full p-2">
+                            <Image src="/images/momo-coin.png" alt="Momo Coin" fill className="object-contain" />
+                        </div>
+                    ) : (
+                        icon
+                    )}
                 </motion.div>
                 <motion.span
                     animate={{ rotate: -360 }}
@@ -215,11 +222,17 @@ function ParticleStream() {
     )
 }
 
-function Pillar({ title, desc, color, icon }: { title: string, desc: string, color: string, icon: React.ReactNode }) {
+function Pillar({ title, desc, color, icon, isCoin }: { title: string, desc: string, color: string, icon: React.ReactNode, isCoin?: boolean }) {
     return (
         <div className="flex flex-col items-start p-8 rounded-3xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all h-full">
-            <div className={`w-14 h-14 rounded-2xl ${color} flex items-center justify-center mb-6 shadow-sm transform group-hover:scale-105 transition-transform`}>
-                {icon}
+            <div className={`w-14 h-14 rounded-2xl ${isCoin ? 'bg-black' : color} flex items-center justify-center mb-6 shadow-sm transform group-hover:scale-105 transition-transform overflow-hidden`}>
+                {isCoin ? (
+                    <div className="relative w-full h-full p-2">
+                        <Image src="/images/momo-coin.png" alt="Coin" fill className="object-contain" />
+                    </div>
+                ) : (
+                    icon
+                )}
             </div>
             <h4 className="text-xl font-bold text-[#35255e] mb-3">{title}</h4>
             <p className="text-gray-500 leading-relaxed">{desc}</p>

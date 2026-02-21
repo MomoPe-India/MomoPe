@@ -63,7 +63,16 @@ export function MediaKitContent() {
                         <SnapshotItem icon={<MapPin />} label="Headquarters" value="Kadapa, Andhra Pradesh" />
                         <SnapshotItem icon={<Globe />} label="Industry" value="Fintech / Digital Payments" />
                         <SnapshotItem icon={<Layers />} label="Products" value="Customer App, Merchant App" />
-                        <SnapshotItem icon={<Award />} label="Key Reward" value="Momo Coins (₹100 min txn)" />
+                        <SnapshotItem
+                            icon={
+                                <div className="relative w-full h-full p-1.5">
+                                    <Image src="/images/momo-coin.png" alt="Coin" fill className="object-contain" />
+                                </div>
+                            }
+                            label="Key Reward"
+                            value="Momo Coins (₹100 min txn)"
+                            isCoin
+                        />
                         <SnapshotItem icon={<Target />} label="Target Market" value="Local Businesses & Merchants" />
                     </div>
                 </div>
@@ -218,10 +227,10 @@ export function MediaKitContent() {
     );
 }
 
-function SnapshotItem({ icon, label, value }: { icon: React.ReactNode, label: string, value: string }) {
+function SnapshotItem({ icon, label, value, isCoin }: { icon: React.ReactNode, label: string, value: string, isCoin?: boolean }) {
     return (
         <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-            <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-4">
+            <div className={`w-10 h-10 rounded-full ${isCoin ? 'bg-black' : 'bg-blue-50'} ${isCoin ? '' : 'text-blue-600'} flex items-center justify-center mb-4 overflow-hidden`}>
                 {icon}
             </div>
             <div className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">{label}</div>

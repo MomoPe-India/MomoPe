@@ -52,8 +52,8 @@ export function HeroVisual() {
                 transition={{ delay: 0.9, type: "spring", stiffness: 200, damping: 20 }}
                 className="absolute top-[22%] right-[2%] md:right-[-2%] glass-card p-3 pr-5 flex items-center gap-4 z-20 hover:scale-105 transition-all shadow-umbra-lg cursor-default group"
             >
-                <div className="w-10 h-10 bg-amber-500/10 rounded-full flex items-center justify-center text-amber-600 backdrop-blur-sm shadow-sm border border-amber-500/20 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-500">
-                    <Coins size={20} fill="currentColor" />
+                <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center p-1.5 backdrop-blur-sm shadow-sm border border-amber-500/20 overflow-hidden relative">
+                    <Image src="/images/momo-coin.png" alt="Coin" fill className="object-contain" />
                 </div>
                 <div>
                     <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Cashback Awarded</div>
