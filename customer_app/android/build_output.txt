@@ -1,0 +1,52 @@
+> Task :gradle:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :gradle:compileKotlin UP-TO-DATE
+> Task :gradle:compileJava NO-SOURCE
+> Task :gradle:compileGroovy NO-SOURCE
+> Task :gradle:pluginDescriptors UP-TO-DATE
+> Task :gradle:processResources UP-TO-DATE
+> Task :gradle:classes UP-TO-DATE
+> Task :gradle:jar UP-TO-DATE
+> Task :app:DebugMinSdkCheck
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+
+> Task :app:compileFlutterBuildDebug
+lib/features/payment/screens/payment_screen.dart:166:29: Error: Member not found: 'iosSurl'.
+        PayUPaymentParamKey.iosSurl:       d['surl'],
+                            ^^^^^^^
+lib/features/payment/screens/payment_screen.dart:167:29: Error: Member not found: 'iosFurl'.
+        PayUPaymentParamKey.iosFurl:       d['furl'],
+                            ^^^^^^^
+lib/features/payment/screens/payment_screen.dart:168:29: Error: Member not found: 'androidSurl'.
+        PayUPaymentParamKey.androidSurl:   d['surl'],
+                            ^^^^^^^^^^^
+lib/features/payment/screens/payment_screen.dart:169:29: Error: Member not found: 'androidFurl'.
+        PayUPaymentParamKey.androidFurl:   d['furl'],
+                            ^^^^^^^^^^^
+lib/features/payment/screens/payment_screen.dart:170:29: Error: Member not found: 'hash'.
+        PayUPaymentParamKey.hash:          d['hash'],
+                            ^^^^
+lib/features/payment/screens/payment_screen.dart:171:29: Error: Member not found: 'udf1'.
+        PayUPaymentParamKey.udf1:          (d['udf1'] ?? '').toString(),
+                            ^^^^
+Target kernel_snapshot_program failed: Exception
+
+
+> Task :app:compileFlutterBuildDebug FAILED
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileFlutterBuildDebug'.
+> Process 'command 'C:\src\flutter\bin\flutter.bat'' finished with non-zero exit value 1
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 5s
+6 actionable tasks: 2 executed, 4 up-to-date

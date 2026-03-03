@@ -1,0 +1,75 @@
+name: customer_app
+description: "MomoPe Customer App — Earn and redeem Momo Coins on every purchase"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Firebase
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.0
+  firebase_messaging: ^15.1.3
+
+  # Supabase
+  supabase_flutter: ^2.7.0
+
+  # Payments
+  payu_checkoutpro_flutter: ^1.4.0
+  crypto: ^3.0.3       # SHA-512 for PayU generateHash callback
+
+  # QR Scanner
+  mobile_scanner: ^5.2.3
+
+  # State Management
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+
+  # Auth — PIN Hashing (client-side Approach A)
+  bcrypt: ^1.1.3
+
+  # Navigation
+  go_router: ^14.6.3
+
+  # UI
+  google_fonts: ^6.2.1
+
+  # Charts
+  fl_chart: ^0.66.2
+
+  # QR Generator
+  qr_flutter: ^4.1.0
+
+  # HTTP (for edge function calls)
+  http: ^1.2.2
+
+  # Internationalization
+  intl: ^0.19.0
+
+  # Utilities
+  url_launcher: ^6.3.0
+  share_plus: ^10.0.0
+  package_info_plus: ^8.1.2    # Dynamic app version in Profile
+  geolocator: ^13.0.1    # GPS for Near You merchant discovery
+
+  # Map (Explore screen — OpenStreetMap, no API key)
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+
+  # Icons
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  build_runner: ^2.4.11
+  riverpod_generator: ^2.6.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/

@@ -1,0 +1,56 @@
+# Environment
+.env
+.env.local
+*.env
+
+# Flutter
+**/build/
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/pubspec.lock
+**/android/.gradle/
+**/android/local.properties
+**/android/key.properties
+**/ios/Flutter/.last_build_id
+
+# Firebase
+**/google-services.json
+**/GoogleService-Info.plist
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+admin/node_modules/
+
+# Supabase
+supabase/.branches/
+supabase/.temp/
+
+# IDEs
+.vscode/
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Debug artifacts (do not commit)
+android_logcat.txt
+*.logcat.txt
+full_hash_logs.txt
+hash_logs.txt
+raw_hash_logs.txt
+*_logs.txt
+refactor_theme.dart
+
+# Android secrets
+**/android/app/upload-keystore.jks
+**/android/app/*.keystore
+**/android/app/key.properties
+
+# Coverage / test output
+coverage/
+*.lcov
