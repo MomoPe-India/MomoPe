@@ -183,18 +183,19 @@ class _StdTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final iconColor = isActive ? context.theme.primary : context.theme.textMuted;
+    final iconColor  = isActive ? context.theme.primary : context.theme.textMuted;
     final labelColor = isActive ? context.theme.primary : context.theme.textMuted;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: [
         Icon(
           isActive ? item.activeIcon : item.icon,
-          size: 24,
+          size: 22,
           color: iconColor,
         ),
-        const SizedBox(height: 3),
+        const SizedBox(height: 2),
         AnimatedDefaultTextStyle(
           duration: const Duration(milliseconds: 150),
           style: TextStyle(
@@ -202,9 +203,9 @@ class _StdTab extends StatelessWidget {
             fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
             color: labelColor,
             letterSpacing: 0.1,
-            height: 1,
+            height: 1.0,
           ),
-          child: Text(item.label),
+          child: Text(item.label, overflow: TextOverflow.ellipsis),
         ),
       ],
     );
@@ -220,12 +221,13 @@ class _CtaTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: [
         AnimatedContainer(
           duration: const Duration(milliseconds: 220),
           curve: Curves.easeOut,
-          width: 46,
-          height: 46,
+          width: 42,   // was 46 — fits in 56px bar with label
+          height: 42,  // was 46
           decoration: BoxDecoration(
             gradient: context.theme.coinGradient,
             shape: BoxShape.circle,
@@ -234,25 +236,25 @@ class _CtaTab extends StatelessWidget {
                 color: context.theme.primary.withValues(
                     alpha: isActive ? 0.45 : 0.22),
                 blurRadius: isActive ? 16 : 8,
-                offset: const Offset(0, 4),
+                offset: const Offset(0, 3),
               ),
             ],
           ),
-          child: Icon(
+          child: const Icon(
             Icons.qr_code_scanner_rounded,
             color: Colors.white,
-            size: 22,
+            size: 20,
           ),
         ),
-        const SizedBox(height: 3),
+        const SizedBox(height: 1),
         AnimatedDefaultTextStyle(
           duration: const Duration(milliseconds: 150),
           style: TextStyle(
-            fontSize: 10,
+            fontSize: 9,   // slightly smaller for CTA to avoid overflow
             fontWeight: isActive ? FontWeight.w800 : FontWeight.w600,
             color: isActive ? context.theme.primary : context.theme.textMuted,
             letterSpacing: 0.1,
-            height: 1,
+            height: 1.0,
           ),
           child: const Text('Pay'),
         ),
