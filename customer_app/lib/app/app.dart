@@ -145,10 +145,38 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
 
       // Payment flow (full-screen, no bottom nav)
-      GoRoute(path: '/payment',
-        builder: (_, s) => PaymentScreen(merchantId: s.extra as String)),
-      GoRoute(path: '/payment-result',
-        builder: (_, s) => PaymentResultScreen(data: s.extra as Map<String, dynamic>)),
+      GoRoute(
+        path: '/payment',
+        builder: (_, s) {
+          // Support both extras (in-app nav) and query params (deep links)
+          final merchantId = s.extra as String? ?? s.uri.queryParameters['merchantId'] ?? '';
+          return PaymentScreen(merchantId: merchantId);
+        },
+      ),
+      GoRoute(
+        path: '/payment-result',
+        builder: (_, s) => PaymentResultScreen(data: s.extra as Map<String, dynamic>? ?? {}),
+      ),
+
+      // Deep link: momope://referral?code=XXX or https://momope.com/referral?code=XXX
+      // Redirects to the referral code screen pre-filled with the code.
+      GoRoute(
+        path: '/referral',
+        redirect: (context, state) {
+          final code = state.uri.queryParameters['code'];
+          if (code != null && code.isNotEmpty) {
+            // Navigate to the referral onboarding screen with the code
+            return '/referral-code?code=$code';
+          }
+          return '/referrals'; // fallback to the in-app referrals tab
+        },
+      ),
+      GoRoute(
+        path: '/referral-code',
+        builder: (_, s) => ReferralCodeScreen(
+          prefillCode: s.uri.queryParameters['code'],
+        ),
+      ),
     ],
   );
 });

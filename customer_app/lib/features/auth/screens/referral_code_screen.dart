@@ -9,7 +9,8 @@ import '../../../core/theme.dart';
 import '../../../shared/widgets/momope_button.dart';
 
 class ReferralCodeScreen extends ConsumerStatefulWidget {
-  const ReferralCodeScreen({super.key});
+  final String? prefillCode;
+  const ReferralCodeScreen({super.key, this.prefillCode});
   @override
   ConsumerState<ReferralCodeScreen> createState() => _ReferralCodeScreenState();
 }
@@ -18,6 +19,14 @@ class _ReferralCodeScreenState extends ConsumerState<ReferralCodeScreen> {
   final _ctrl = TextEditingController();
   bool _loading = false;
   String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.prefillCode != null) {
+      _ctrl.text = widget.prefillCode!.toUpperCase();
+    }
+  }
 
   @override
   void dispose() { _ctrl.dispose(); super.dispose(); }
