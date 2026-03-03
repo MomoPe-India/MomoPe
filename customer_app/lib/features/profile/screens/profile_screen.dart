@@ -85,7 +85,8 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
-  bool _notifEnabled = true; // placeholder
+  bool _notifEnabled = true;
+  bool _notifSaving  = false; // debounce while saving
   String _appVersion = '';
 
   @override
@@ -94,6 +95,50 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     PackageInfo.fromPlatform().then((info) {
       if (mounted) setState(() => _appVersion = 'v${info.version}');
     });
+  }
+
+  // ── Load notification pref from already-fetched profile data ─────────────────
+  // Called once profile data is available in build().
+  void _syncNotifPref(Map<String, dynamic> data) {
+    final val = (data['notifications_enabled'] as bool?) ?? true;
+    // Only update state if different — avoids rebuild loop
+    if (_notifEnabled != val) {
+      // Use post-frame to avoid setState during build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) setState(() => _notifEnabled = val);
+      });
+    }
+  }
+
+  // ── Persist notification preference to Supabase ───────────────────────────────
+  Future<void> _setNotifEnabled(bool value) async {
+    if (_notifSaving) return;
+    setState(() {
+      _notifEnabled = value;
+      _notifSaving  = true;
+    });
+    try {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid == null) return;
+      await Supabase.instance.client
+          .from('users')
+          .update({'notifications_enabled': value})
+          .eq('firebase_uid', uid);
+    } catch (e) {
+      // Revert on failure
+      if (mounted) setState(() => _notifEnabled = !value);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Could not save preference. Try again.'),
+            backgroundColor: context.theme.error,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _notifSaving = false);
+    }
   }
 
   // ── helpers ─────────────────────────────────────────────────────────────────
@@ -243,6 +288,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Widget _buildBody(Map<String, dynamic> data) {
+    // Sync notification preference from DB value (post-frame to avoid setState-in-build)
+    _syncNotifPref(data);
+
     final user       = data['user'] as Map<String, dynamic>;
     final balance    = data['balance'] as Map<String, dynamic>;
     final referral   = data['referral'] as Map<String, dynamic>;
@@ -589,21 +637,28 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
         const SizedBox(height: 20),
 
-        // ── 5. Preferences (Sprint 5 placeholder) ─────────────────────────────
+        // ── 5. Preferences ─────────────────────────────────────────────────────
         _Section(title: 'Preferences', children: [
           SwitchListTile(
-            secondary: Icon(Icons.notifications_outlined,
-                color: context.theme.textPrimary, size: 20),
+            secondary: Icon(
+              _notifEnabled ? Icons.notifications_rounded : Icons.notifications_off_outlined,
+              color: _notifEnabled ? context.theme.primary : context.theme.textMuted,
+              size: 20,
+            ),
             title: Text('Transaction Alerts',
                 style: TextStyle(
                   color: context.theme.textPrimary,
                   fontWeight: FontWeight.w500,
                   fontSize: 15,
                 )),
-            subtitle: Text('Get notified for every coin credit & debit',
-                style: TextStyle(color: context.theme.textMuted, fontSize: 12)),
+            subtitle: Text(
+              _notifEnabled
+                  ? 'Push notifications are enabled'
+                  : 'Push notifications are disabled',
+              style: TextStyle(color: context.theme.textMuted, fontSize: 12),
+            ),
             value: _notifEnabled,
-            onChanged: (v) => setState(() => _notifEnabled = v),
+            onChanged: _notifSaving ? null : _setNotifEnabled,
             activeThumbColor: context.theme.primary,
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           ),

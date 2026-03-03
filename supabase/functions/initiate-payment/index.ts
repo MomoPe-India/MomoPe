@@ -83,7 +83,20 @@ Deno.serve(async (req: Request) => {
     const uid = await verifyFirebaseToken(idToken);
     if (!uid) return json({ success: false, error: 'Invalid Firebase JWT', code: 'UNAUTHORIZED' }, 401);
 
-    // ── 2. Parse body ─────────────────────────────────────────────────────────
+    // -- Rate limit: max 3 payment initiations per 60 seconds per user --
+    const rateLimitWindow = new Date(Date.now() - 60_000).toISOString();
+    const rateLimitResp = await dbFetch(
+      `/transactions?user_id=eq.${encodeURIComponent(uid)}&created_at=gte.${encodeURIComponent(rateLimitWindow)}&select=id`,
+    );
+    if (rateLimitResp.ok) {
+      const recentTxns = await rateLimitResp.json() as unknown[];
+      if (recentTxns.length >= 3) {
+        console.warn('[initiate-payment] Rate limit hit for uid:', uid);
+        return json({ success: false, error: 'Too many requests. Please wait a moment.', code: 'RATE_LIMITED' }, 429);
+      }
+    }
+
+    // -- 2. Parse body --
     const body = await req.json() as Record<string, unknown>;
     const merchant_id = body['merchant_id'] as string;
     const gross_amount = body['gross_amount'] as number;
@@ -216,9 +229,7 @@ Deno.serve(async (req: Request) => {
     const vasHashInput = `${PAYU_MERCHANT_KEY}|vas_for_mobile_sdk|${userCredential}|${PAYU_SALT}`;
     const vasHash = await sha512(vasHashInput);
 
-    console.log(`[initiate-payment] Generated hashes. txn=${txn.id} | payu_txnid=${payu_txnid}`);
-    console.log(`[initiate-payment] payment hash string (length ${paymentHashInput.split('|').length}): ${paymentHashInput}`);
-    console.log(`[initiate-payment] prd hash string: ${prdHashInput}`);
+    console.log(`[initiate-payment] Hashes ready. txn=${txn.id} | payu_txnid=${payu_txnid} | fiat=₹${amount}`);
 
     return json({
       success: true,
